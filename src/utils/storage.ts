@@ -2,7 +2,7 @@ import { Match, PlayerStat } from '../types';
 import { INITIAL_MATCHES } from '../data/initialMatches';
 import { TEAMS } from '../data/teams';
 
-const STORAGE_KEY = 'copa_dls_matches_v8_barca_dominator';
+const STORAGE_KEY = 'copa_dls_matches_v12_group_a_bayern_fix';
 
 export function loadMatchesFromStorage(): Match[] {
   try {

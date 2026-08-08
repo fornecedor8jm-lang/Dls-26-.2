@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GroupName, Match, Team, TimezoneMode } from '../types';
 import { MatchCard } from './MatchCard';
-import { Calendar, Filter, RefreshCw, AlertCircle, Shield } from 'lucide-react';
+import { Calendar, Filter, RefreshCw, AlertCircle, Shield, Layers } from 'lucide-react';
 
 interface MatchListProps {
   matches: Match[];
@@ -54,104 +54,48 @@ export const MatchList: React.FC<MatchListProps> = ({
 
   return (
     <div className="space-y-5">
-      {/* Notice Banner */}
-      <div className="bg-[#162A3D] border border-[#2B4052] p-3.5 rounded-xl text-white flex items-center justify-between gap-3 shadow-sm">
+      {/* Timezone Notice Header */}
+      <div className="bg-[#162A3D] border border-[#2B4052] p-3.5 rounded-2xl text-white flex items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
           <p className="text-xs text-slate-200">
-            Programação oficial da Copa DLS 26 ({timezone === 'CAT' ? 'CAT / Moçambique' : 'BRT / Brasília'}).
+            Tabela oficial de jogos e horários da Copa DLS 26 ({timezone === 'CAT' ? 'CAT / Moçambique' : 'BRT / Brasília'}).
           </p>
         </div>
-
-        {/* Admin Mode Toggle */}
-        <button
-          onClick={() => {
-            if (!isAdminMode) {
-              const pass = window.prompt('Digite a senha de administrador ou clique em OK para ativar visualização Admin:');
-              if (pass !== null) setIsAdminMode(true);
-            } else {
-              setIsAdminMode(false);
-            }
-          }}
-          className={`px-2.5 py-1 rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-colors border ${
-            isAdminMode
-              ? 'bg-amber-500 text-slate-950 border-amber-400'
-              : 'bg-[#0B1F33] text-slate-400 border-[#2B4052] hover:text-white'
-          }`}
-          title="Modo Organizador / Admin"
-        >
-          <Shield size={12} />
-          <span>{isAdminMode ? 'Admin Ativo' : 'Área Admin'}</span>
-        </button>
       </div>
 
-      {/* Control Toolbar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#162A3D] p-3 rounded-xl border border-[#2B4052]">
-        {/* Stage Tabs */}
-        <div className="flex flex-wrap items-center gap-1 overflow-x-auto p-0.5">
-          <button
-            onClick={() => setStageFilter('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap uppercase tracking-wider ${
-              stageFilter === 'ALL'
-                ? 'bg-[#138A4B] text-white shadow-sm'
-                : 'bg-[#0B1F33] text-slate-300 hover:text-white border border-[#2B4052]'
-            }`}
-          >
-            Todos os Jogos ({matches.length})
-          </button>
-          <button
-            onClick={() => setStageFilter('R1')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap uppercase tracking-wider ${
-              stageFilter === 'R1'
-                ? 'bg-[#138A4B] text-white shadow-sm'
-                : 'bg-[#0B1F33] text-slate-300 hover:text-white border border-[#2B4052]'
-            }`}
-          >
-            Rodada 1 (08/08)
-          </button>
-          <button
-            onClick={() => setStageFilter('R2')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap uppercase tracking-wider ${
-              stageFilter === 'R2'
-                ? 'bg-[#138A4B] text-white shadow-sm'
-                : 'bg-[#0B1F33] text-slate-300 hover:text-white border border-[#2B4052]'
-            }`}
-          >
-            Rodada 2 (09/08)
-          </button>
-          <button
-            onClick={() => setStageFilter('R3')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap uppercase tracking-wider ${
-              stageFilter === 'R3'
-                ? 'bg-[#138A4B] text-white shadow-sm'
-                : 'bg-[#0B1F33] text-slate-300 hover:text-white border border-[#2B4052]'
-            }`}
-          >
-            Rodada 3 (10/08)
-          </button>
-          <button
-            onClick={() => setStageFilter('KNOCKOUT')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all whitespace-nowrap uppercase tracking-wider ${
-              stageFilter === 'KNOCKOUT'
-                ? 'bg-[#138A4B] text-white shadow-sm'
-                : 'bg-[#0B1F33] text-slate-300 hover:text-white border border-[#2B4052]'
-            }`}
-          >
-            Mata-Mata
-          </button>
-        </div>
-
-        {/* Secondary filters & Admin Controls */}
-        <div className="flex items-center gap-2">
-          {/* Group Filter */}
-          <div className="flex items-center gap-1 bg-[#0B1F33] p-1 rounded-lg border border-[#2B4052] text-xs font-bold text-slate-300">
-            <Filter className="w-3.5 h-3.5 text-slate-400 ml-1.5" />
+      {/* Vertical Stacked Dropdown Filters (Mobile Optimized) */}
+      <div className="bg-[#162A3D] p-3.5 rounded-xl border border-[#2B4052] space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+          {/* 1. Rodada Select Dropdown */}
+          <div className="flex items-center gap-2 bg-[#0B1F33] px-3 py-2 rounded-lg border border-[#2B4052] text-xs font-bold text-slate-200">
+            <Layers className="w-4 h-4 text-amber-400 shrink-0" />
+            <label htmlFor="round-select" className="shrink-0 text-slate-400">Rodada:</label>
             <select
+              id="round-select"
+              value={stageFilter}
+              onChange={(e) => setStageFilter(e.target.value as any)}
+              className="bg-transparent text-white font-black focus:outline-none cursor-pointer w-full"
+            >
+              <option value="ALL" className="bg-[#0B1F33]">Todas as Rodadas ({matches.length} jogos)</option>
+              <option value="R1" className="bg-[#0B1F33]">Rodada 1 (08/08)</option>
+              <option value="R2" className="bg-[#0B1F33]">Rodada 2 (09/08)</option>
+              <option value="R3" className="bg-[#0B1F33]">Rodada 3 (10/08)</option>
+              <option value="KNOCKOUT" className="bg-[#0B1F33]">Mata-Mata / Eliminatórias</option>
+            </select>
+          </div>
+
+          {/* 2. Grupo Select Dropdown */}
+          <div className="flex items-center gap-2 bg-[#0B1F33] px-3 py-2 rounded-lg border border-[#2B4052] text-xs font-bold text-slate-200">
+            <Filter className="w-4 h-4 text-amber-400 shrink-0" />
+            <label htmlFor="matches-group-select" className="shrink-0 text-slate-400">Grupo:</label>
+            <select
+              id="matches-group-select"
               value={groupFilter}
               onChange={(e) => setGroupFilter(e.target.value as any)}
-              className="bg-transparent text-white font-bold focus:outline-none pr-2 cursor-pointer"
+              className="bg-transparent text-white font-black focus:outline-none cursor-pointer w-full"
             >
-              <option value="ALL" className="bg-[#0B1F33]">Grupo: Todos</option>
+              <option value="ALL" className="bg-[#0B1F33]">Todos os Grupos (A-H)</option>
               <option value="A" className="bg-[#0B1F33]">Grupo A</option>
               <option value="B" className="bg-[#0B1F33]">Grupo B</option>
               <option value="C" className="bg-[#0B1F33]">Grupo C</option>
@@ -162,25 +106,14 @@ export const MatchList: React.FC<MatchListProps> = ({
               <option value="H" className="bg-[#0B1F33]">Grupo H</option>
             </select>
           </div>
-
-          {/* Reset button - Only rendered in Admin Mode */}
-          {isAdminMode && (
-            <button
-              onClick={onResetMatches}
-              className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors border border-amber-500/40"
-              title="Restaurar tabela original de jogos (Admin)"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          )}
         </div>
       </div>
 
       {/* Match Cards List */}
       {filteredMatches.length === 0 ? (
-        <div className="text-center p-12 bg-[#162A3D] rounded-xl border border-[#2B4052] text-slate-300 space-y-3">
+        <div className="text-center p-10 bg-[#162A3D] rounded-xl border border-[#2B4052] text-slate-300 space-y-3">
           <Calendar className="w-10 h-10 mx-auto text-slate-400" />
-          <p className="font-bold text-white leading-relaxed max-w-md mx-auto">
+          <p className="font-bold text-white leading-relaxed max-w-md mx-auto text-xs sm:text-sm">
             {getEmptyStateMessage()}
           </p>
           <button
@@ -188,13 +121,13 @@ export const MatchList: React.FC<MatchListProps> = ({
               setStageFilter('ALL');
               setGroupFilter('ALL');
             }}
-            className="px-4 py-2 bg-[#138A4B] text-white font-bold text-xs rounded-lg hover:bg-[#0f733e] transition-colors"
+            className="px-4 py-2 bg-emerald-500 text-slate-950 font-black text-xs rounded-xl hover:bg-emerald-400 transition-colors cursor-pointer"
           >
             Ver Todos os Jogos
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {filteredMatches.map((match) => (
             <MatchCard
               key={match.id}
@@ -206,6 +139,29 @@ export const MatchList: React.FC<MatchListProps> = ({
           ))}
         </div>
       )}
+
+      {/* Isolated Admin Access at the bottom */}
+      <div className="pt-4 border-t border-[#2B4052]/60 flex items-center justify-between text-xs text-slate-400">
+        <span className="text-[11px] font-medium text-slate-400">Área restrita de lançamento de placares:</span>
+        <button
+          onClick={() => {
+            if (!isAdminMode) {
+              const pass = window.prompt('Digite a senha de administrador para ativar lançamento de placares:');
+              if (pass !== null) setIsAdminMode(true);
+            } else {
+              setIsAdminMode(false);
+            }
+          }}
+          className={`px-3 py-1.5 rounded-lg text-[11px] font-extrabold inline-flex items-center gap-1.5 transition-colors border cursor-pointer ${
+            isAdminMode
+              ? 'bg-amber-500 text-slate-950 border-amber-400'
+              : 'bg-[#0B1F33] text-slate-400 border-[#2B4052] hover:text-white'
+          }`}
+        >
+          <Shield size={13} />
+          <span>{isAdminMode ? 'Sair do Modo Admin' : 'Acesso Organizador / Admin'}</span>
+        </button>
+      </div>
     </div>
   );
 };

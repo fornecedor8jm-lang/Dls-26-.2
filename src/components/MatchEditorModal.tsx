@@ -6,16 +6,19 @@ import { X, Save, Plus, Trash2, Trophy, Flame } from 'lucide-react';
 
 interface MatchEditorModalProps {
   match: Match | null;
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  onSaveMatch: (updatedMatch: Match) => void;
+  onSaveMatch?: (updatedMatch: Match) => void;
+  onSave?: (updatedMatch: Match) => void;
+  teams?: Team[];
 }
 
 export const MatchEditorModal: React.FC<MatchEditorModalProps> = ({
   match,
-  isOpen,
+  isOpen = true,
   onClose,
-  onSaveMatch
+  onSaveMatch,
+  onSave
 }) => {
   if (!isOpen || !match) return null;
 
@@ -70,7 +73,10 @@ export const MatchEditorModal: React.FC<MatchEditorModalProps> = ({
       awayScore: Number(awayScore),
       goals
     };
-    onSaveMatch(updated);
+    const saveFn = onSaveMatch || onSave;
+    if (saveFn) {
+      saveFn(updated);
+    }
     onClose();
   };
 

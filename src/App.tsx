@@ -3,11 +3,6 @@ import {
   BarChart3,
   CalendarDays,
   ChevronRight,
-  Dices,
-  Medal,
-  Newspaper,
-  Phone,
-  Swords,
   Trophy,
   X,
   Users,
@@ -15,21 +10,18 @@ import {
   MessageCircle,
   ShieldAlert,
   Clock,
-  Sparkles,
   Globe,
   ArrowLeft,
-  Home
+  Menu,
+  Newspaper
 } from 'lucide-react';
 import { Match, Team, TimezoneMode } from './types';
 import { TEAMS } from './data/teams';
 import { FriendliesView } from './components/FriendliesView';
 import { TrailerSection } from './components/TrailerSection';
 import { ConfirmedTeamsView } from './components/ConfirmedTeamsView';
-import { GroupsSection } from './components/GroupsSection';
 import { MatchList } from './components/MatchList';
 import { GroupStandingsView } from './components/GroupStandings';
-import { KnockoutBracket } from './components/KnockoutBracket';
-import { StatsLeaderboard } from './components/StatsLeaderboard';
 import { LegendModal } from './components/LegendModal';
 import { MatchEditorModal } from './components/MatchEditorModal';
 import {
@@ -38,7 +30,7 @@ import {
   resetMatchesStorage
 } from './utils/storage';
 
-type Tab = 'home' | 'grupos' | 'participantes' | 'friendlies' | 'matches' | 'table' | 'bracket' | 'stats' | 'contact';
+type Tab = 'home' | 'matches' | 'table' | 'teams' | 'contact' | 'friendlies';
 
 const WHATSAPP_LINK = 'https://wa.me/55096991821516';
 
@@ -65,14 +57,10 @@ function Badge({ team, large = false }: { team: Team; large?: boolean }) {
 function Title({
   eyebrow,
   title,
-  action,
-  onAction,
   onBack
 }: {
   eyebrow: string;
   title: string;
-  action?: string;
-  onAction?: () => void;
   onBack?: () => void;
 }) {
   return (
@@ -81,30 +69,22 @@ function Title({
         <span className="eyebrow">{eyebrow}</span>
         <h2>{title}</h2>
       </div>
-      <div className="flex items-center gap-2">
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-1.5 bg-[#162A3D] hover:bg-[#203a52] text-amber-400 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-[#2B4052] transition-all shadow-sm"
-          >
-            <ArrowLeft size={16} />
-            <span>Voltar ao Menu Principal</span>
-          </button>
-        )}
-        {action && (
-          <button className="text-button" onClick={onAction}>
-            {action}
-            <ChevronRight size={16} />
-          </button>
-        )}
-      </div>
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 bg-[#162A3D] hover:bg-[#203a52] text-amber-400 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-[#2B4052] transition-all shadow-xs cursor-pointer shrink-0"
+        >
+          <ArrowLeft size={16} />
+          <span>Voltar ao Início</span>
+        </button>
+      )}
     </div>
   );
 }
 
 function ContactList() {
   return (
-    <section className="contacts-section space-y-6">
+    <section className="contacts-section space-y-5">
       <div className="section-title">
         <div>
           <span className="eyebrow">Atendimento & Inscrições</span>
@@ -114,16 +94,16 @@ function ContactList() {
       </div>
 
       {/* Primary Founder Contact Banner */}
-      <div className="bg-[#162A3D] text-white p-6 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-lg">
-        <div className="space-y-2">
+      <div className="bg-[#162A3D] text-white p-5 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+        <div className="space-y-1.5">
           <span className="text-emerald-400 font-extrabold text-xs uppercase tracking-widest inline-flex items-center gap-1.5">
             <MessageCircle size={16} /> Envio de Placares no PV
           </span>
-          <h3 className="text-xl font-black font-display">
+          <h3 className="text-lg sm:text-xl font-black font-display">
             WhatsApp Oficial da Administração da Copa DLS 26
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-            Os resultados dos jogos devem ser enviados via PV para o fundador, que atualizará o site com os dados e estatísticas oficiais do torneio.
+            Os resultados dos jogos devem ser enviados via PV para o fundador (+55 096 99182-1516), que atualizará a tabela oficial do torneio.
           </p>
         </div>
 
@@ -131,7 +111,7 @@ function ContactList() {
           href={WHATSAPP_LINK}
           target="_blank"
           rel="noreferrer"
-          className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm py-3 px-6 rounded-xl inline-flex items-center gap-2 transition-colors shrink-0 shadow-md"
+          className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm py-3 px-5 rounded-xl inline-flex items-center gap-2 transition-colors shrink-0 shadow-md w-full md:w-auto justify-center"
         >
           <MessageCircle size={20} /> Entrar em Contato no WhatsApp
         </a>
@@ -147,11 +127,7 @@ function ContactList() {
             key={contact.number}
           >
             <span className="contact-icon">
-              {contact.type === 'WHATSAPP' ? (
-                <MessageCircle size={18} className="text-emerald-500" />
-              ) : (
-                <Phone size={18} className="text-sky-500" />
-              )}
+              <MessageCircle size={18} className="text-emerald-500" />
             </span>
             <span>
               <strong>{contact.team}</strong>
@@ -196,41 +172,39 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Exactly 5 main mobile navigation options
   const nav = [
-    { id: 'home' as Tab, label: 'Início', icon: Trophy },
-    { id: 'grupos' as Tab, label: 'Grupos (A-H)', icon: Dices },
-    { id: 'participantes' as Tab, label: 'Participantes (32)', icon: Users },
-    { id: 'friendlies' as Tab, label: 'Amistosos', icon: Newspaper },
-    { id: 'matches' as Tab, label: 'Jogos & Horários', icon: CalendarDays },
-    { id: 'table' as Tab, label: 'Tabela', icon: BarChart3 },
-    { id: 'bracket' as Tab, label: 'Mata-mata', icon: Swords },
-    { id: 'stats' as Tab, label: 'Números', icon: Medal },
-    { id: 'contact' as Tab, label: 'Contato PV', icon: MessageCircle }
+    { id: 'home' as Tab, label: 'INÍCIO', icon: Trophy },
+    { id: 'matches' as Tab, label: 'JOGOS', icon: CalendarDays },
+    { id: 'table' as Tab, label: 'TABELA', icon: BarChart3 },
+    { id: 'teams' as Tab, label: 'TIMES', icon: Users },
+    { id: 'contact' as Tab, label: 'CONTATO', icon: MessageCircle }
   ];
+
+  const finishedMatches = matches.filter((m) => m.status === 'FINISHED');
 
   return (
     <div className="app-shell">
       {/* Announcement Banner */}
       <div className="announcement">
         <div className="container announcement-inner flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            🏆 <b>COPA DLS 2026</b> · <span>Sorteio Oficial Concluído!</span>
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
+            🏆 <b>COPA DLS 2026</b> · <span>Chaveamento dos 8 Grupos Concluído!</span>
           </div>
           <div className="announcement-right flex items-center gap-3">
-            <span className="hidden sm:inline">🎲 <b>GRUPOS A, B, C, D, E, F, G, H DEFINIDOS</b></span>
-            <span className="live-pill bg-emerald-500 text-slate-950 font-black">32/32 VAGAS COMPLETAS ✅</span>
+            <span className="live-pill bg-emerald-500 text-slate-950 font-black">32/32 TIMES CONFIRMADOS ✅</span>
           </div>
         </div>
       </div>
 
       {/* Header */}
       <header className="site-header">
-        <div className="container header-inner">
+        <div className="container header-inner flex items-center justify-between">
           <button className="brand" onClick={() => go('home')}>
             <img
               src="https://raw.githubusercontent.com/fornecedor8jm-lang/Dls-26/main/public/copa-dls-26-logo-final.png"
               alt="Copa DLS 26 Logo"
-              className="h-10 sm:h-12 w-auto object-contain flex-shrink-0"
+              className="h-9 sm:h-11 w-auto object-contain flex-shrink-0"
               referrerPolicy="no-referrer"
             />
             <span>
@@ -240,6 +214,18 @@ export default function App() {
               </strong>
             </span>
           </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2 rounded-xl bg-[#162A3D] text-white border border-[#2B4052] flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} className="text-amber-400" /> : <Menu size={20} className="text-amber-400" />}
+            <span className="text-[11px] font-extrabold uppercase">{menuOpen ? 'Fechar' : 'Menu'}</span>
+          </button>
+
+          {/* 5 Core Navigation Tabs */}
           <nav className={menuOpen ? 'open' : ''}>
             {nav.map(({ id, label, icon: Icon }) => (
               <button
@@ -260,9 +246,9 @@ export default function App() {
         <div className="container flex items-center justify-between text-xs text-slate-300">
           <div className="flex items-center gap-2 font-bold">
             <Clock size={14} className="text-amber-400" />
-            <span>Horários dos Jogos:</span>
+            <span className="hidden sm:inline">Horários:</span>
             <span className="text-amber-400 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-              {timezone === 'CAT' ? '🇲🇿 Moçambique (CAT / GMT+2)' : '🇧🇷 Brasília (BRT / GMT-3)'}
+              {timezone === 'CAT' ? '🇲🇿 Moçambique (CAT)' : '🇧🇷 Brasília (BRT)'}
             </span>
           </div>
 
@@ -270,9 +256,9 @@ export default function App() {
             <Globe size={13} className="text-slate-400" />
             <button
               onClick={() => setTimezone(timezone === 'CAT' ? 'BRT' : 'CAT')}
-              className="px-2.5 py-1 rounded bg-[#162A3D] hover:bg-[#203a52] text-amber-300 transition-colors border border-[#2B4052] font-black text-[11px]"
+              className="px-2.5 py-1 rounded-lg bg-[#162A3D] hover:bg-[#203a52] text-amber-300 transition-colors border border-[#2B4052] font-black text-[11px] cursor-pointer"
             >
-              Mudar p/ {timezone === 'CAT' ? '🇧🇷 Brasília (BRT)' : '🇲🇿 Moçambique (CAT)'}
+              Mudar p/ {timezone === 'CAT' ? '🇧🇷 BRT' : '🇲🇿 CAT'}
             </button>
           </div>
         </div>
@@ -281,56 +267,41 @@ export default function App() {
       <main>
         {tab === 'home' && (
           <>
-            {/* Banner / Hero Principal */}
+            {/* Banner / Hero Principal Resumo */}
             <section className="hero">
               <div className="container hero-grid">
-                <div className="hero-copy">
+                <div className="hero-copy space-y-3">
                   <span className="kicker">
                     <span className="kicker-line" /> O campeonato da sua liga
                   </span>
                   <h1 className="text-3xl sm:text-5xl font-black font-display text-white tracking-tight">
                     🏆 COPA DLS 2026
                   </h1>
-                  <p className="text-base sm:text-lg text-slate-200 leading-relaxed pt-1">
-                    Sorteio dos 8 Grupos (A-H) concluído! Todas as 32 equipes estão chaveadas com a programação oficial dos confrontos e horários de Moçambique divulgados.
+                  <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+                    Acompanhe os próximos confrontos, a classificação atualizada dos 8 grupos e a lista oficial das 32 equipes.
                   </p>
 
                   {/* Status Box */}
-                  <div className="bg-[#162A3D]/90 border border-[#2B4052] p-4 rounded-xl space-y-3 mt-4">
+                  <div className="bg-[#162A3D]/90 border border-[#2B4052] p-3.5 rounded-xl space-y-2 mt-2">
                     <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-wider">
                       <ShieldCheck size={16} />
-                      <span>Status do Torneio: Grupos A, B, C, D, E, F, G, H Definidos ✅</span>
+                      <span>32 Equipes Confirmadas & Grupos A-H Definidos ✅</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold pt-1">
-                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
-                        <span className="text-slate-400 block text-[10px]">Grupos Fechados</span>
-                        <strong className="text-emerald-400 text-sm font-black">8 Grupos (A-H)</strong>
+                      <div className="bg-[#0E1A26] p-2 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Grupos</span>
+                        <strong className="text-emerald-400 text-sm font-black">8 (A-H)</strong>
                       </div>
-                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
-                        <span className="text-slate-400 block text-[10px]">Primeira Rodada</span>
-                        <strong className="text-amber-400 text-sm font-black">16 Jogos Divulgados</strong>
+                      <div className="bg-[#0E1A26] p-2 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Realizadas</span>
+                        <strong className="text-amber-400 text-sm font-black">{finishedMatches.length} Partidas</strong>
                       </div>
-                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
-                        <span className="text-slate-400 block text-[10px]">Total de Vagas</span>
-                        <strong className="text-sky-300 text-sm font-black">32 / 32 Preenchidas</strong>
+                      <div className="bg-[#0E1A26] p-2 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Clubes</span>
+                        <strong className="text-sky-300 text-sm font-black">32 Times</strong>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="hero-buttons pt-2">
-                    <button
-                      className="primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black"
-                      onClick={() => go('matches')}
-                    >
-                      <CalendarDays size={18} /> Ver Tabela & Horários de Moçambique <ChevronRight size={17} />
-                    </button>
-                    <button
-                      className="secondary-button inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-bold"
-                      onClick={() => go('grupos')}
-                    >
-                      <Dices size={18} className="text-amber-400" /> Chaveamento dos Grupos (A-H)
-                    </button>
                   </div>
                 </div>
 
@@ -340,104 +311,181 @@ export default function App() {
                     alt="Interface de Dream League Soccer"
                   />
                   <div className="hero-note">
-                    <span className="note-label">SITUAÇÃO DO TORNEIO</span>
-                    <strong>🎲 Grupos A a H Definidos ✅</strong>
-                    <span>32 Equipes Chaveadas na Competição</span>
-                  </div>
-                  <div className="hero-stamp">
-                    <Trophy size={21} />
-                    <span>
-                      DADOS
-                      <br />
-                      <b>OFICIAIS</b>
-                    </span>
+                    <span className="note-label">COMPETIÇÃO</span>
+                    <strong>🎲 32 Clubes Chaveados ✅</strong>
+                    <span>8 Grupos de A a H</span>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Match Schedule Spotlight */}
-            <section className="container section-block space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            {/* Mobile Directives Hub: 3 Primary Actions */}
+            <section className="container py-5 space-y-3">
+              <div className="bg-[#162A3D] border border-[#2B4052] rounded-2xl p-4 text-white">
+                <span className="text-amber-400 font-black text-xs uppercase tracking-wider block mb-1">
+                  📱 Navegação Rápida
+                </span>
+                <h2 className="text-lg font-black font-display text-white">
+                  O que você deseja consultar?
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5">
+                  Acesse cada conteúdo em seu único local oficial:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* 1. Ver Jogos */}
+                <div
+                  onClick={() => go('matches')}
+                  className="bg-white border-2 border-slate-200 hover:border-amber-500 p-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-amber-500/15 text-amber-600 flex items-center justify-center shrink-0">
+                      <CalendarDays size={22} />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-sm font-display">
+                        1. Próximos Jogos & Horários
+                      </h3>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Ver tabela de partidas completa
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} className="text-amber-500 group-hover:translate-x-1 transition-transform shrink-0" />
+                </div>
+
+                {/* 2. Ver Tabela */}
+                <div
+                  onClick={() => go('table')}
+                  className="bg-white border-2 border-slate-200 hover:border-emerald-500 p-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
+                      <BarChart3 size={22} />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-sm font-display">
+                        2. Classificação dos Grupos
+                      </h3>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Pontuação, vitórias e saldo (SG)
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} className="text-emerald-500 group-hover:translate-x-1 transition-transform shrink-0" />
+                </div>
+
+                {/* 3. Ver Times */}
+                <div
+                  onClick={() => go('teams')}
+                  className="bg-white border-2 border-slate-200 hover:border-sky-500 p-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-sky-500/15 text-sky-600 flex items-center justify-center shrink-0">
+                      <Users size={22} />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-sm font-display">
+                        3. Times Participantes
+                      </h3>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Ver os 32 clubes por grupo
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} className="text-sky-500 group-hover:translate-x-1 transition-transform shrink-0" />
+                </div>
+              </div>
+            </section>
+
+            {/* Concise Matches Preview (MAX 2 FEATURED MATCHES) */}
+            <section className="container section-block space-y-3 pt-0">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                 <div>
-                  <span className="eyebrow text-amber-600">Horários de Moçambique (CAT)</span>
-                  <h2 className="text-2xl font-black font-display text-slate-900">
-                    📅 Tabela de Jogos da 1ª Rodada (08/08)
+                  <span className="eyebrow text-amber-600">Resumo da Rodada</span>
+                  <h2 className="text-lg sm:text-xl font-black font-display text-slate-900">
+                    ⚽ Próximos Jogos em Destaque
                   </h2>
                 </div>
                 <button
                   onClick={() => go('matches')}
-                  className="inline-flex items-center gap-1.5 text-xs font-black text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200"
+                  className="inline-flex items-center gap-1 text-xs font-black text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 cursor-pointer shrink-0"
                 >
-                  <span>Ver Todos os 16 Jogos</span>
+                  <span>Ver todos os jogos</span>
                   <ChevronRight size={15} />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {matches.slice(0, 4).map((m) => (
-                  <div
-                    key={m.id}
-                    onClick={() => go('matches')}
-                    className="p-3 bg-white border border-slate-200 hover:border-amber-400 rounded-xl transition-all cursor-pointer shadow-xs space-y-2"
-                  >
-                    <div className="flex items-center justify-between text-[11px] font-black text-slate-500 border-b border-slate-100 pb-1.5">
-                      <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded">Grupo {m.group}</span>
-                      <span className="text-amber-600 font-bold flex items-center gap-1">
-                        <Clock size={12} /> {m.timeCAT} CAT
-                      </span>
-                    </div>
+              {/* Show maximum 2 featured matches */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {matches.slice(0, 2).map((m) => {
+                  const home = TEAMS.find((t) => t.id === m.homeTeamId);
+                  const away = TEAMS.find((t) => t.id === m.awayTeamId);
+                  return (
+                    <div
+                      key={m.id}
+                      onClick={() => go('matches')}
+                      className="p-3.5 bg-white border border-slate-200 hover:border-amber-400 rounded-xl transition-all cursor-pointer shadow-xs space-y-2"
+                    >
+                      <div className="flex items-center justify-between text-[11px] font-black text-slate-500 border-b border-slate-100 pb-1.5">
+                        <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded">Grupo {m.group}</span>
+                        <span className="text-amber-600 font-bold flex items-center gap-1">
+                          <Clock size={12} /> {m.timeCAT} CAT
+                        </span>
+                      </div>
 
-                    <div className="space-y-1 text-xs font-bold text-slate-800">
-                      <div className="flex justify-between items-center">
-                        <span className="truncate">{TEAMS.find(t => t.id === m.homeTeamId)?.name}</span>
-                        <span className="font-mono font-black text-slate-400">-</span>
+                      <div className="space-y-1 text-xs font-bold text-slate-800">
+                        <div className="flex justify-between items-center">
+                          <span className="truncate">{home?.name}</span>
+                          <span className="font-mono font-black text-slate-900">
+                            {m.status === 'FINISHED' ? m.homeScore : 'VS'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="truncate">{away?.name}</span>
+                          <span className="font-mono font-black text-slate-900">
+                            {m.status === 'FINISHED' ? m.awayScore : ''}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="truncate">{TEAMS.find(t => t.id === m.awayTeamId)?.name}</span>
-                        <span className="font-mono font-black text-slate-400">-</span>
-                      </div>
+
+                      {m.status === 'SCHEDULED' && (
+                        <div className="text-[10px] text-slate-400 font-extrabold uppercase text-center pt-1 border-t border-slate-50">
+                          Aguardando início
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
-            {/* Official Tournament Trailer */}
-            <section className="container section-block">
+            {/* Trailer Section */}
+            <section className="container section-block pt-0">
               <TrailerSection />
             </section>
 
-            {/* Seção: Grupos A, B, C, D, E, F, G, H */}
-            <section className="container section-block">
-              <GroupsSection onSelectTeam={setSelectedTeam} />
-            </section>
-
-            {/* Seção: Participantes Confirmados (Cards) */}
-            <section className="container section-block">
-              <ConfirmedTeamsView onSelectTeam={setSelectedTeam} />
-            </section>
-
-            {/* Friendly Announcement Banner on Home */}
-            <section className="container section-block">
-              <div className="bg-[#162A3D] text-white p-5 sm:p-6 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
-                <div className="space-y-1.5 max-w-2xl">
+            {/* Friendlies Notice Banner */}
+            <section className="container section-block pt-0">
+              <div className="bg-[#162A3D] text-white p-5 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
+                <div className="space-y-1 max-w-2xl">
                   <div className="flex items-center gap-2 text-amber-400 font-extrabold text-xs uppercase tracking-widest">
                     <ShieldAlert size={16} />
-                    <span>Comunicado Oficial · Amistosos Pré-Competição</span>
+                    <span>Amistosos Pré-Copa</span>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black font-display text-white">
-                    Resultados da Pré-Temporada & Reportagens
+                  <h3 className="text-lg font-black font-display text-white">
+                    Resultados da Pré-Temporada
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    ⚠️ Os jogos preparatórios não possuem validade para a pontuação da Copa DLS. Confira todas as reportagens e resultados na aba de Amistosos.
+                  <p className="text-xs text-slate-300">
+                    Os amistosos não pontuam na tabela oficial. Acesse os resultados preparatórios.
                   </p>
                 </div>
                 <button
-                  className="primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black shrink-0"
+                  className="primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black shrink-0 cursor-pointer text-xs"
                   onClick={() => go('friendlies')}
                 >
-                  <Newspaper size={17} /> Ver Aba de Amistosos <ChevronRight size={17} />
+                  <Newspaper size={16} /> Ver Amistosos <ChevronRight size={16} />
                 </button>
               </div>
             </section>
@@ -446,44 +494,22 @@ export default function App() {
           </>
         )}
 
-        {/* Global Exit/Return Button at the top of inner tabs */}
+        {/* Global Return Button for Sub-pages */}
         {tab !== 'home' && (
-          <div className="container pt-5 pb-2">
+          <div className="container pt-4 pb-1">
             <button
               onClick={() => go('home')}
-              className="inline-flex items-center gap-2 bg-[#162A3D] hover:bg-[#203a52] text-amber-400 font-extrabold text-xs px-4 py-2.5 rounded-xl border border-[#2B4052] transition-all shadow-md group cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#162A3D] hover:bg-[#203a52] text-amber-400 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-[#2B4052] transition-all shadow-xs group cursor-pointer"
             >
-              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-              <span>⬅️ Voltar ao Menu Principal (Início)</span>
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              <span>Voltar ao Menu Principal</span>
             </button>
           </div>
         )}
 
-        {tab === 'grupos' && (
-          <section className="container page-section">
-            <GroupsSection onSelectTeam={setSelectedTeam} />
-          </section>
-        )}
-
-        {tab === 'participantes' && (
-          <section className="container page-section">
-            <ConfirmedTeamsView onSelectTeam={setSelectedTeam} />
-          </section>
-        )}
-
-        {tab === 'friendlies' && (
-          <section className="container page-section">
-            <Title
-              eyebrow="Jogos Preparatórios"
-              title="📰 Amistosos Pré-Copa"
-              onBack={() => go('home')}
-            />
-            <FriendliesView onSelectTeam={setSelectedTeam} />
-          </section>
-        )}
-
+        {/* JOGOS PAGE */}
         {tab === 'matches' && (
-          <section className="container page-section space-y-6">
+          <section className="container page-section space-y-5">
             <Title
               eyebrow="Tabela Oficial de Jogos & Horários (CAT / Moçambique)"
               title="📅 Programação da Fase de Grupos"
@@ -500,8 +526,9 @@ export default function App() {
           </section>
         )}
 
+        {/* TABELA PAGE */}
         {tab === 'table' && (
-          <section className="container page-section space-y-6">
+          <section className="container page-section space-y-5">
             <Title
               eyebrow="Fase de Grupos (A-H)"
               title="📊 Classificação Oficial das Equipes"
@@ -516,44 +543,36 @@ export default function App() {
           </section>
         )}
 
-        {tab === 'bracket' && (
-          <section className="container page-section space-y-6">
+        {/* TIMES PAGE (UNIFIED PARTICIPANTES & GRUPOS) */}
+        {tab === 'teams' && (
+          <section className="container page-section space-y-5">
             <Title
-              eyebrow="Fase Eliminatória"
-              title="⚔️ Chaveamento do Mata-Mata"
+              eyebrow="32 Clubes Confirmados"
+              title="🛡️ Participantes & Grupos da Copa DLS 26"
               onBack={() => go('home')}
             />
-            <KnockoutBracket
-              matches={matches}
-              timezone={timezone}
-              onEditMatch={setEditingMatch}
-              onSelectTeam={setSelectedTeam}
-            />
+            <ConfirmedTeamsView onSelectTeam={setSelectedTeam} />
           </section>
         )}
 
-        {tab === 'stats' && (
-          <section className="container page-section space-y-6">
-            <Title
-              eyebrow="Estatísticas da Competição"
-              title="🏅 Artilharia e Dados Gerais da Copa DLS 26"
-              onBack={() => go('home')}
-            />
-            <StatsLeaderboard
-              matches={matches}
-              teams={TEAMS}
-              onSelectTeam={setSelectedTeam}
-            />
-          </section>
-        )}
-
+        {/* CONTATO PAGE */}
         {tab === 'contact' && (
           <section className="container page-section">
             <ContactList />
           </section>
         )}
 
-
+        {/* FRIENDLIES PAGE (SECONDARY) */}
+        {tab === 'friendlies' && (
+          <section className="container page-section space-y-5">
+            <Title
+              eyebrow="Jogos Preparatórios"
+              title="📰 Amistosos Pré-Copa"
+              onBack={() => go('home')}
+            />
+            <FriendliesView onSelectTeam={setSelectedTeam} />
+          </section>
+        )}
       </main>
 
       <footer>
@@ -573,7 +592,7 @@ export default function App() {
             </span>
           </button>
           <p>
-            Feito por quem joga. Para quem joga. · Horários exibidos em{' '}
+            Copa DLS 2026 · Horários exibidos em{' '}
             <b>{timezone === 'CAT' ? 'CAT (Moçambique)' : 'BRT (Brasília)'}</b>
           </p>
           <a
