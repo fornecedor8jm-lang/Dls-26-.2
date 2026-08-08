@@ -1,0 +1,837 @@
+import { useMemo, useState } from 'react';
+import {
+  BarChart3,
+  CalendarDays,
+  ChevronRight,
+  Gamepad2,
+  Globe2,
+  Menu,
+  Medal,
+  Newspaper,
+  Phone,
+  Swords,
+  Trophy,
+  X,
+  Zap,
+  Flame,
+  ShieldAlert
+} from 'lucide-react';
+import { Match, Team } from './types';
+import { TEAMS, getTeamById } from './data/teams';
+import { INITIAL_MATCHES } from './data/initialMatches';
+import { computePlayerStats, getTournamentSummary } from './utils/storage';
+import { calculateGroupStandings } from './utils/standings';
+import { FriendliesView } from './components/FriendliesView';
+
+type Tab = 'home' | 'friendlies' | 'matches' | 'table' | 'bracket' | 'stats';
+
+const labelStage = (stage: Match['stage']) =>
+  ({
+    GROUP: 'Fase de grupos',
+    QUARTERS: 'Quartas de final',
+    SEMIS: 'Semifinal',
+    THIRD_PLACE: 'Disputa do 3º lugar',
+    FINAL: 'Grande final'
+  }[stage]);
+
+const formatDate = (value: string) =>
+  new Date(`${value}T12:00:00`)
+    .toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+    .replace('.', '')
+    .toUpperCase();
+
+const OPENING_BRT = '15:30';
+const OPENING_MOZAMBIQUE = '20:30';
+
+const PLAYER_CONTACTS = [
+  { team: 'FC Labamba', number: '877559587', href: 'tel:+258877559587' },
+  { team: 'FC Celeste', number: '859136077', href: 'tel:+258859136077' },
+  { team: 'FC Bayern München', number: '840444822', href: 'tel:+258840444822' }
+];
+
+function Badge({ team, large = false }: { team: Team; large?: boolean }) {
+  return (
+    <div
+      className={`team-badge ${large ? 'team-badge-large' : ''}`}
+      style={{
+        background: `linear-gradient(145deg, ${team.primaryColor}, ${team.secondaryColor})`
+      }}
+    >
+      <span>{team.shortName.slice(0, 2)}</span>
+    </div>
+  );
+}
+
+function Title({
+  eyebrow,
+  title,
+  action,
+  onAction
+}: {
+  eyebrow: string;
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
+  return (
+    <div className="section-title">
+      <div>
+        <span className="eyebrow">{eyebrow}</span>
+        <h2>{title}</h2>
+      </div>
+      {action && (
+        <button className="text-button" onClick={onAction}>
+          {action}
+          <ChevronRight size={16} />
+        </button>
+      )}
+    </div>
+  );
+}
+
+const TBD_TEAM: Team = {
+  id: 'tbd',
+  name: 'A definir',
+  shortName: 'TBD',
+  group: 'A',
+  primaryColor: '#CBD5E1',
+  secondaryColor: '#64748B',
+  badgeSymbol: 'Shield',
+  badgeType: 'shield'
+};
+
+const PLAYOFF_SLOTS: Record<string, [string, string]> = {
+  m_qf1: ['1º Grupo A', '2º Grupo B'],
+  m_qf2: ['1º Grupo B', '2º Grupo A'],
+  m_qf3: ['1º Grupo C', '2º Grupo D'],
+  m_qf4: ['1º Grupo D', '2º Grupo C'],
+  m_sf1: ['Vencedor QF1', 'Vencedor QF2'],
+  m_sf2: ['Vencedor QF3', 'Vencedor QF4'],
+  m_3rd: ['Perdedor SF1', 'Perdedor SF2'],
+  m_final: ['Vencedor SF1', 'Vencedor SF2']
+};
+
+const GROUP_MATCHES = INITIAL_MATCHES.filter((item) => item.stage === 'GROUP');
+
+function finishedGroup(group: 'A' | 'B' | 'C' | 'D') {
+  return GROUP_MATCHES.filter((item) => item.group === group).every(
+    (item) =>
+      item.status === 'FINISHED' &&
+      item.homeScore !== undefined &&
+      item.awayScore !== undefined
+  );
+}
+
+function winnerOf(id: string) {
+  const game = INITIAL_MATCHES.find((item) => item.id === id);
+  if (
+    !game ||
+    game.status !== 'FINISHED' ||
+    game.homeScore === undefined ||
+    game.awayScore === undefined ||
+    game.homeScore === game.awayScore
+  )
+    return null;
+  return getTeamById(
+    game.homeScore > game.awayScore ? game.homeTeamId : game.awayTeamId
+  ).name;
+}
+
+function loserOf(id: string) {
+  const game = INITIAL_MATCHES.find((item) => item.id === id);
+  if (
+    !game ||
+    game.status !== 'FINISHED' ||
+    game.homeScore === undefined ||
+    game.awayScore === undefined ||
+    game.homeScore === game.awayScore
+  )
+    return null;
+  return getTeamById(
+    game.homeScore < game.awayScore ? game.homeTeamId : game.awayTeamId
+  ).name;
+}
+
+function resolvePlayoffLabels(match: Match): [string, string] | null {
+  const slots = PLAYOFF_SLOTS[match.id];
+  if (!slots) return null;
+  if (match.id.startsWith('m_qf')) {
+    const groups: Record<string, 'A' | 'B' | 'C' | 'D'> = {
+      m_qf1: 'A',
+      m_qf2: 'B',
+      m_qf3: 'C',
+      m_qf4: 'D'
+    };
+    const first = groups[match.id];
+    const second =
+      match.id === 'm_qf1'
+        ? 'B'
+        : match.id === 'm_qf2'
+        ? 'A'
+        : match.id === 'm_qf3'
+        ? 'D'
+        : 'C';
+    if (finishedGroup(first) && finishedGroup(second)) {
+      const one = calculateGroupStandings(
+        first,
+        INITIAL_MATCHES,
+        TEAMS.filter((team) => team.group === first)
+      )[0]?.team.name;
+      const two = calculateGroupStandings(
+        second,
+        INITIAL_MATCHES,
+        TEAMS.filter((team) => team.group === second)
+      )[1]?.team.name;
+      if (one && two) return [one, two];
+    }
+  }
+  const resolved =
+    match.id === 'm_sf1'
+      ? [winnerOf('m_qf1'), winnerOf('m_qf2')]
+      : match.id === 'm_sf2'
+      ? [winnerOf('m_qf3'), winnerOf('m_qf4')]
+      : match.id === 'm_3rd'
+      ? [loserOf('m_sf1'), loserOf('m_sf2')]
+      : match.id === 'm_final'
+      ? [winnerOf('m_sf1'), winnerOf('m_sf2')]
+      : null;
+  return resolved && resolved[0] && resolved[1]
+    ? [resolved[0], resolved[1]]
+    : slots;
+}
+
+function MatchCard({ match }: { match: Match; key?: string }) {
+  const home = getTeamById(match.homeTeamId);
+  const away = getTeamById(match.awayTeamId);
+  const slots = PLAYOFF_SLOTS[match.id];
+  const labels = resolvePlayoffLabels(match);
+  const homeTeam = slots ? TBD_TEAM : home;
+  const awayTeam = slots ? TBD_TEAM : away;
+  const homeName = labels?.[0] ?? home.name;
+  const awayName = labels?.[1] ?? away.name;
+
+  return (
+    <article className="match-card">
+      <div className="match-meta">
+        <span>
+          {labelStage(match.stage)}
+          {match.group ? ` · Grupo ${match.group}` : ''}
+        </span>
+        <span>
+          {formatDate(match.date)} · {match.timeBRT} BRT / {match.timeCAT} MOZ
+        </span>
+      </div>
+      <div className="match-teams">
+        <div>
+          <Badge team={homeTeam} large />
+          <strong>{homeName}</strong>
+        </div>
+        <div className="score">
+          {match.homeScore ?? '—'} <small>x</small> {match.awayScore ?? '—'}
+        </div>
+        <div>
+          <Badge team={awayTeam} large />
+          <strong>{awayName}</strong>
+        </div>
+      </div>
+      <div className={`match-status ${match.status !== 'FINISHED' ? 'next' : ''}`}>
+        <span className="status-dot" />
+        {slots && match.status !== 'FINISHED'
+          ? 'A definir conforme a classificação'
+          : match.status === 'FINISHED'
+          ? 'Finalizado'
+          : match.status === 'LIVE'
+          ? 'Ao vivo'
+          : 'Agendado'}
+      </div>
+    </article>
+  );
+}
+
+function TomorrowSchedule({ matches }: { matches: Match[] }) {
+  const tomorrow = matches.filter(
+    (match) => match.date === '2026-08-08' && match.stage === 'GROUP'
+  );
+  return (
+    <section className="container schedule-section">
+      <Title
+        eyebrow="Cronograma de amanhã · 8 de agosto"
+        title="Quem joga amanhã"
+      />
+      <a
+        className="schedule-download"
+        href="/cronograma-08-agosto.txt"
+        download
+      >
+        Baixar cronograma em TXT
+      </a>
+      <p className="page-lead">
+        Oito partidas da fase de grupos. Horários simultâneos: Brasília (BRT) e
+        Moçambique (CAT).
+      </p>
+      <div className="schedule-list">
+        {tomorrow.map((match) => {
+          const home = getTeamById(match.homeTeamId);
+          const away = getTeamById(match.awayTeamId);
+          return (
+            <div className="schedule-row" key={match.id}>
+              <span className="schedule-time">
+                <strong>{match.timeBRT}</strong>
+                <small>BRT</small>
+                <em>{match.timeCAT}</em>
+                <small>MOZ</small>
+              </span>
+              <span className="schedule-group">Grupo {match.group}</span>
+              <strong className="schedule-team">{home.name}</strong>
+              <span className="schedule-vs">×</span>
+              <strong className="schedule-team">{away.name}</strong>
+              <span className="schedule-status">Agendado</span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ContactList() {
+  return (
+    <section className="contacts-section">
+      <div className="section-title">
+        <div>
+          <span className="eyebrow">Contato dos jogadores</span>
+          <h2>Quem está jogando</h2>
+        </div>
+        <span className="contacts-note">Lista pública · somente leitura</span>
+      </div>
+      <p className="page-lead">
+        Os números de telefone exibidos foram informados pelos próprios
+        jogadores. A responsabilidade pelos dados é dos jogadores, não do site.
+      </p>
+      <div className="contact-grid">
+        {PLAYER_CONTACTS.map((contact) => (
+          <a
+            className="contact-card"
+            href={contact.href}
+            key={contact.number}
+          >
+            <span className="contact-icon">
+              <Phone size={18} />
+            </span>
+            <span>
+              <strong>{contact.team}</strong>
+              <small>Jogador da Copa DLS 26</small>
+            </span>
+            <b>{contact.number}</b>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Standings({
+  group,
+  matches,
+  onTeam,
+  onSelectGroup
+}: {
+  group: 'A' | 'B' | 'C' | 'D';
+  matches: Match[];
+  onTeam: (team: Team) => void;
+  onSelectGroup: (g: 'A' | 'B' | 'C' | 'D') => void;
+}) {
+  const rows = calculateGroupStandings(
+    group,
+    matches,
+    TEAMS.filter((team) => team.group === group)
+  );
+  return (
+    <div className="table-shell">
+      <div className="group-tabs">
+        {(['A', 'B', 'C', 'D'] as const).map((item) => (
+          <button
+            key={item}
+            className={item === group ? 'active' : ''}
+            onClick={() => onSelectGroup(item)}
+          >
+            {`Grupo ${item}`}
+          </button>
+        ))}
+      </div>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Equipe</th>
+              <th>J</th>
+              <th>V</th>
+              <th>SG</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.team.id} onClick={() => onTeam(row.team)}>
+                <td>
+                  <span className={`rank ${row.rank <= 2 ? 'highlight' : ''}`}>
+                    {row.rank}
+                  </span>
+                </td>
+                <td>
+                  <div className="team-cell">
+                    <Badge team={row.team} />
+                    <span>{row.team.name}</span>
+                  </div>
+                </td>
+                <td>{row.played}</td>
+                <td>{row.won}</td>
+                <td
+                  className={
+                    row.goalDifference >= 0 ? 'positive' : 'negative'
+                  }
+                >
+                  {row.goalDifference > 0 ? '+' : ''}
+                  {row.goalDifference}
+                </td>
+                <td>
+                  <strong>{row.points}</strong>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [tab, setTab] = useState<Tab>('home');
+  const matches = INITIAL_MATCHES;
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [group, setGroup] = useState<'A' | 'B' | 'C' | 'D'>('A');
+
+  const go = (next: Tab) => {
+    setTab(next);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const summary = useMemo(() => getTournamentSummary(matches), [matches]);
+  const playerStats = useMemo(
+    () => computePlayerStats(matches).slice(0, 5),
+    [matches]
+  );
+  const upcoming = matches
+    .filter((match) => match.status !== 'FINISHED')
+    .slice(0, 4);
+  const heroMatch = upcoming[0] ?? matches[0];
+
+  const nav = [
+    { id: 'home' as Tab, label: 'Início', icon: Trophy },
+    { id: 'friendlies' as Tab, label: 'Amistosos', icon: Newspaper },
+    { id: 'matches' as Tab, label: 'Jogos', icon: CalendarDays },
+    { id: 'table' as Tab, label: 'Tabela', icon: BarChart3 },
+    { id: 'bracket' as Tab, label: 'Mata-mata', icon: Swords },
+    { id: 'stats' as Tab, label: 'Números', icon: Medal }
+  ];
+
+  return (
+    <div className="app-shell">
+      <div className="announcement">
+        <div className="container announcement-inner">
+          <span>
+            <Zap size={14} /> Copa DLS 26 · Dream League Soccer
+          </span>
+          <span className="announcement-right">
+            Abertura: 08/08/2026 · {OPENING_BRT} Brasília / {OPENING_MOZAMBIQUE}{' '}
+            Moçambique <span className="live-pill">EDIÇÃO 2026</span>
+          </span>
+        </div>
+      </div>
+
+      <header className="site-header">
+        <div className="container header-inner">
+          <button className="brand" onClick={() => go('home')}>
+            <img
+              src="https://raw.githubusercontent.com/fornecedor8jm-lang/Dls-26/main/public/copa-dls-26-logo-final.png"
+              alt="Copa DLS 26 Logo"
+              className="h-10 sm:h-12 w-auto object-contain flex-shrink-0"
+              referrerPolicy="no-referrer"
+            />
+            <span>
+              <b>COPA</b>
+              <strong>
+                DLS <em>26</em>
+              </strong>
+            </span>
+          </button>
+          <nav className={menuOpen ? 'open' : ''}>
+            {nav.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                className={tab === id ? 'active' : ''}
+                onClick={() => go(id)}
+              >
+                <Icon size={16} />
+                {label}
+              </button>
+            ))}
+          </nav>
+          <div className="header-actions">
+            <div className="timezone">
+              <Globe2 size={15} />
+              15:30 BRT · 20:30 MOZ
+            </div>
+            <button
+              className="icon-button menu-button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Abrir menu"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        {tab === 'home' && (
+          <>
+            <section className="hero">
+              <div className="container hero-grid">
+                <div className="hero-copy">
+                  <span className="kicker">
+                    <span className="kicker-line" /> O campeonato da sua liga
+                  </span>
+                  <h1>
+                    Seu time.
+                    <br />
+                    <span>Sua lenda.</span>
+                    <br />
+                    Seu DLS.
+                  </h1>
+                  <p>
+                    Acompanhe a Copa DLS 26 com os dados oficiais do torneio:
+                    equipes, grupos, partidas, placares, mata-mata e
+                    estatísticas reais do Dream League Soccer.
+                  </p>
+                  <div className="hero-buttons">
+                    <button
+                      className="primary-button"
+                      onClick={() => go('matches')}
+                    >
+                      Ver próximos jogos <ChevronRight size={17} />
+                    </button>
+                    <button
+                      className="secondary-button"
+                      onClick={() => go('table')}
+                    >
+                      Explorar tabela
+                    </button>
+                  </div>
+                </div>
+                <div className="hero-visual">
+                  <img
+                    src="/assets/dls-team.jpg"
+                    alt="Interface de Dream League Soccer"
+                  />
+                  <div className="hero-note">
+                    <span className="note-label">PRÓXIMO JOGO</span>
+                    <strong>
+                      {getTeamById(heroMatch.homeTeamId).shortName}{' '}
+                      <small>vs</small>{' '}
+                      {getTeamById(heroMatch.awayTeamId).shortName}
+                    </strong>
+                    <span>
+                      {formatDate(heroMatch.date)} · {heroMatch.timeBRT} BRT /{' '}
+                      {heroMatch.timeCAT} MOZ
+                    </span>
+                  </div>
+                  <div className="hero-stamp">
+                    <Trophy size={21} />
+                    <span>
+                      DADOS
+                      <br />
+                      <b>OFICIAIS</b>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Friendly Announcement Banner on Home */}
+            <section className="container section-block">
+              <div className="bg-[#162A3D] text-white p-5 sm:p-6 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
+                <div className="space-y-1.5 max-w-2xl">
+                  <div className="flex items-center gap-2 text-amber-400 font-extrabold text-xs uppercase tracking-widest">
+                    <ShieldAlert size={16} />
+                    <span>Comunicado Oficial · Amistosos Pré-Competição</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-black font-display text-white">
+                    Resultados da Pré-Temporada & Reportagens
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    ⚠️ Os jogos preparatórios não possuem validade para a pontuação e classificação da Copa DLS. Confira todas as reportagens, estatísticas e resultados da aba de Amistosos.
+                  </p>
+                </div>
+                <button
+                  className="primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black shrink-0"
+                  onClick={() => go('friendlies')}
+                >
+                  <Newspaper size={17} /> Ver Aba de Amistosos <ChevronRight size={17} />
+                </button>
+              </div>
+            </section>
+
+            <section className="container section-block">
+              <Title
+                eyebrow="A rodada vem aí"
+                title="Próximos confrontos"
+                action="Ver todos os jogos"
+                onAction={() => go('matches')}
+              />
+              <div className="match-grid">
+                {upcoming.slice(0, 2).map((match) => (
+                  <MatchCard key={match.id} match={match} />
+                ))}
+              </div>
+            </section>
+
+            <TomorrowSchedule matches={matches} />
+
+            <section className="container split-section">
+              <div>
+                <Title
+                  eyebrow="Classificação"
+                  title="O caminho para a taça"
+                  action="Tabela completa"
+                  onAction={() => go('table')}
+                />
+                <Standings
+                  group={group}
+                  matches={matches}
+                  onTeam={setSelectedTeam}
+                  onSelectGroup={setGroup}
+                />
+              </div>
+              <aside className="feature-card">
+                <img
+                  src="/assets/dls-match.jpg"
+                  alt="Partida de Dream League Soccer"
+                />
+                <div className="feature-overlay">
+                  <span className="eyebrow">MOMENTO DLS</span>
+                  <h3>{summary.matchesPlayed} partidas já calculadas</h3>
+                  <p>
+                    {summary.totalGoals} gols registrados · média de{' '}
+                    {summary.avgGoals} por jogo.
+                  </p>
+                  <button
+                    onClick={() => go('stats')}
+                    className="text-button light"
+                  >
+                    Ver estatísticas <ChevronRight size={16} />
+                  </button>
+                </div>
+              </aside>
+            </section>
+
+            <ContactList />
+          </>
+        )}
+
+        {tab === 'friendlies' && (
+          <section className="container page-section">
+            <Title eyebrow="Jogos Preparatórios" title="📰 Amistosos Pré-Copa" />
+            <FriendliesView onSelectTeam={setSelectedTeam} />
+          </section>
+        )}
+
+        {tab === 'matches' && (
+          <section className="container page-section">
+            <Title eyebrow="Calendário oficial" title="Todos os jogos" />
+            <div className="filter-row">
+              <span>{summary.totalMatches} partidas · horários oficiais</span>
+              <span className="timezone">
+                <Globe2 size={15} /> 15:30 Brasília · 20:30 Moçambique
+              </span>
+            </div>
+            <div className="match-list">
+              {matches.map((match) => (
+                <MatchCard key={match.id} match={match} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {tab === 'table' && (
+          <section className="container page-section">
+            <Title
+              eyebrow="Classificação oficial"
+              title="Tabela da Copa DLS 26"
+            />
+            <p className="page-lead">
+              Dados calculados a partir dos placares salvos no repositório.
+              Clique em uma equipe para ver seus detalhes.
+            </p>
+            <div className="table-switcher">
+              {(['A', 'B', 'C', 'D'] as const).map((item) => (
+                <button
+                  key={item}
+                  className={group === item ? 'active' : ''}
+                  onClick={() => setGroup(item)}
+                >
+                  Grupo {item}
+                </button>
+              ))}
+            </div>
+            <Standings
+              group={group}
+              matches={matches}
+              onTeam={setSelectedTeam}
+              onSelectGroup={setGroup}
+            />
+          </section>
+        )}
+
+        {tab === 'bracket' && (
+          <section className="container page-section">
+            <Title eyebrow="Fase decisiva" title="Caminho até a taça" />
+            <p className="page-lead">
+              Os dois primeiros de cada grupo avançam. O chaveamento abaixo é
+              preenchido conforme os pontos e os resultados oficiais.
+            </p>
+            <div className="bracket">
+              {(['QUARTERS', 'SEMIS', 'THIRD_PLACE', 'FINAL'] as const).map(
+                (stage) => (
+                  <div key={stage}>
+                    <span className="eyebrow">{labelStage(stage)}</span>
+                    {matches
+                      .filter((match) => match.stage === stage)
+                      .map((match) => (
+                        <MatchCard key={match.id} match={match} />
+                      ))}
+                  </div>
+                )
+              )}
+            </div>
+          </section>
+        )}
+
+        {tab === 'stats' && (
+          <section className="container page-section">
+            <Title
+              eyebrow="Números da competição"
+              title="Estatísticas DLS"
+            />
+            <div className="stats-hero">
+              <div>
+                <span className="eyebrow">Resumo oficial</span>
+                <h3>
+                  {summary.totalGoals}
+                  <br />
+                  <em>gols registrados</em>
+                </h3>
+              </div>
+              <BarChart3 size={48} />
+            </div>
+            <div className="summary-grid">
+              <div>
+                <strong>{summary.matchesPlayed}</strong>
+                <span>Jogos finalizados</span>
+              </div>
+              <div>
+                <strong>{summary.avgGoals}</strong>
+                <span>Média de gols</span>
+              </div>
+              <div>
+                <strong>{summary.teamsCount}</strong>
+                <span>Equipes</span>
+              </div>
+            </div>
+            <div className="leaderboard">
+              <h3>Artilharia registrada</h3>
+              {playerStats.length ? (
+                playerStats.map((player, index) => (
+                  <div className="leader-row" key={player.id}>
+                    <span className="leader-rank">0{index + 1}</span>
+                    <div className="player-avatar">
+                      {player.name.slice(0, 1)}
+                    </div>
+                    <div>
+                      <strong>{player.name}</strong>
+                      <span>{getTeamById(player.teamId).name}</span>
+                    </div>
+                    <b>
+                      {player.goals}
+                      <small> GOLS</small>
+                    </b>
+                  </div>
+                ))
+              ) : (
+                <p>Nenhum gol registrado ainda.</p>
+              )}
+            </div>
+          </section>
+        )}
+      </main>
+
+      <footer>
+        <div className="container footer-inner">
+          <button className="brand footer-brand" onClick={() => go('home')}>
+            <img
+              src="https://raw.githubusercontent.com/fornecedor8jm-lang/Dls-26/main/public/copa-dls-26-logo-final.png"
+              alt="Copa DLS 26 Logo"
+              className="h-10 w-auto object-contain flex-shrink-0"
+              referrerPolicy="no-referrer"
+            />
+            <span>
+              <b>COPA</b>
+              <strong>
+                DLS <em>26</em>
+              </strong>
+            </span>
+          </button>
+          <p>Feito por quem joga. Para quem joga.</p>
+          <span className="footer-readonly">Atualizações somente via GitHub</span>
+        </div>
+      </footer>
+
+      {selectedTeam && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setSelectedTeam(null)}
+        >
+          <div
+            className="team-modal"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="close-button"
+              onClick={() => setSelectedTeam(null)}
+            >
+              <X size={18} />
+            </button>
+            <Badge team={selectedTeam} large />
+            <span className="eyebrow">Grupo {selectedTeam.group}</span>
+            <h2>{selectedTeam.name}</h2>
+            <p>
+              {selectedTeam.description ||
+                'Equipe inscrita na Copa DLS 26.'}
+            </p>
+            <div className="modal-players">
+              <span>Jogadores-chave</span>
+              <strong>
+                {selectedTeam.keyPlayers?.join(' · ') ||
+                  'Dados não informados'}
+              </strong>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
