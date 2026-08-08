@@ -119,9 +119,29 @@ export const KnockoutBracket: React.FC<KnockoutBracketProps> = ({
           <Clock className="w-3.5 h-3.5" />
           <span>Aguardando o encerramento da Fase de Grupos</span>
         </div>
-        <p className="text-xs text-slate-300 max-w-lg mx-auto font-normal">
-          Os dois primeiros colocados de cada grupo se classificarão para as Quartas de Final da Copa DLS 26.
+        <p className="text-xs text-slate-300 max-w-xl mx-auto font-normal">
+          Os dois primeiros colocados de cada grupo se classificarão para as Quartas de Final.
         </p>
+
+        {/* Visual Crossing Explanation */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 max-w-2xl mx-auto text-[11px] font-bold text-slate-200">
+          <div className="bg-[#0B1F33] p-2 rounded-lg border border-[#2B4052]">
+            <span className="text-amber-400 block font-black text-[10px]">QF1</span>
+            1º Gr. A × 2º Gr. B
+          </div>
+          <div className="bg-[#0B1F33] p-2 rounded-lg border border-[#2B4052]">
+            <span className="text-amber-400 block font-black text-[10px]">QF2</span>
+            1º Gr. C × 2º Gr. D
+          </div>
+          <div className="bg-[#0B1F33] p-2 rounded-lg border border-[#2B4052]">
+            <span className="text-amber-400 block font-black text-[10px]">QF3</span>
+            1º Gr. E × 2º Gr. F
+          </div>
+          <div className="bg-[#0B1F33] p-2 rounded-lg border border-[#2B4052]">
+            <span className="text-amber-400 block font-black text-[10px]">QF4</span>
+            1º Gr. G × 2º Gr. H
+          </div>
+        </div>
       </div>
 
       {/* Bracket Layout */}
@@ -157,12 +177,21 @@ export const KnockoutBracket: React.FC<KnockoutBracketProps> = ({
                 <Crown className="w-4 h-4 text-amber-400" />
                 GRANDE FINAL
               </span>
-              <button
-                onClick={handleFinalClick}
-                className="text-[10px] px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black hover:bg-amber-400 transition-colors"
-              >
-                🎉 Confetes
-              </button>
+              {finalMatch && finalMatch.status === 'FINISHED' ? (
+                <button
+                  onClick={handleFinalClick}
+                  className="text-[10px] px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black hover:bg-amber-400 transition-colors cursor-pointer"
+                >
+                  🎉 Confetes
+                </button>
+              ) : (
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-500 font-bold border border-slate-700 cursor-not-allowed"
+                  title="Ativado após a definição do campeão"
+                >
+                  🎉 Confetes (Aguardando Campeão)
+                </span>
+              )}
             </div>
 
             {finalMatch && renderMatchCard(finalMatch)}

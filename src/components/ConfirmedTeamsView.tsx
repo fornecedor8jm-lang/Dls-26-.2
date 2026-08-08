@@ -35,8 +35,10 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
             <UserPlus size={28} />
           </div>
           <div>
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Vagas Disponíveis</span>
-            <strong className="text-2xl font-black font-display text-amber-400">{openSlotsCount} Restantes</strong>
+            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Status das Vagas</span>
+            <strong className="text-xl sm:text-2xl font-black font-display text-amber-400">
+              {openSlotsCount > 0 ? `${openSlotsCount} Restantes` : 'Inscrições Encerradas'}
+            </strong>
           </div>
         </div>
 
