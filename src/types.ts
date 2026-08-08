@@ -1,4 +1,4 @@
-export type GroupName = 'A' | 'B' | 'C' | 'D';
+export type GroupName = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
 
 export type MatchStatus = 'SCHEDULED' | 'LIVE' | 'FINISHED';
 
@@ -6,7 +6,7 @@ export interface Team {
   id: string;
   name: string;
   shortName: string;
-  group: GroupName;
+  group?: GroupName;
   primaryColor: string;
   secondaryColor: string;
   badgeSymbol: string; // Icon name or SVG identifier

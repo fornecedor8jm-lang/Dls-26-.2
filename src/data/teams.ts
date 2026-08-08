@@ -1,57 +1,57 @@
 import { Team } from '../types';
 
 export const TEAMS: Team[] = [
-  // GRUPO A
+  // ================= GRUPO A ✅ =================
   {
     id: 'bayern',
-    name: 'FC BAYERN MUNCHEN',
+    name: 'FC Bayern',
     shortName: 'BAY',
     group: 'A',
     primaryColor: '#DC052D',
     secondaryColor: '#0066B2',
     badgeSymbol: 'Shield',
     badgeType: 'shield',
-    description: 'Tradicional gigante de Munique na busca pelo domínio total na Copa DLS.',
+    description: '1º do Grupo A. Gigante tradicional na busca pelo título na Copa DLS 26.',
     keyPlayers: ['Lewandowski', 'Müller', 'Sané', 'Neuer']
   },
   {
-    id: 'bluelock',
-    name: 'Blue Lock',
-    shortName: 'BLK',
+    id: 'bayer_munchen',
+    name: 'Bayer de Munchen',
+    shortName: 'BMU',
     group: 'A',
-    primaryColor: '#0055FF',
-    secondaryColor: '#00E5FF',
-    badgeSymbol: 'Lock',
-    badgeType: 'lock',
-    description: 'Projeto focado na criação do atacante mais egoísta e implacável do torneio.',
-    keyPlayers: ['Isagi Yoichi', 'Rin Itoshi', 'Nagi Seishiro', 'Bachira Meguru']
+    primaryColor: '#EF4444',
+    secondaryColor: '#1E293B',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '2º do Grupo A. Potência tática com futebol moderno e pressão alta.',
+    keyPlayers: ['Musiala', 'Kimmich', 'Coman', 'Upamecano']
   },
   {
-    id: 'celeste',
-    name: 'FC Celeste',
-    shortName: 'CEL',
+    id: 'babymaxx',
+    name: 'Baby Maxxx',
+    shortName: 'BMX',
     group: 'A',
-    primaryColor: '#38BDF8',
-    secondaryColor: '#FFFFFF',
+    primaryColor: '#EC4899',
+    secondaryColor: '#8B5CF6',
     badgeSymbol: 'Star',
     badgeType: 'star',
-    description: 'Força celeste com futebol bonito e passes rápidos no gramado virtual.',
-    keyPlayers: ['Gabriel Celeste', 'Cavani', 'Arrascaeta', 'Muslera']
+    description: '3º do Grupo A. Jovens prodígios prontos para surpreender na Copa DLS 26.',
+    keyPlayers: ['Maxx', 'Endrick', 'Yamal', 'Gavi']
   },
   {
-    id: 'dominator',
-    name: 'Dominator',
-    shortName: 'DOM',
+    id: 'sporting',
+    name: 'Sporting',
+    shortName: 'SPO',
     group: 'A',
-    primaryColor: '#A855F7',
-    secondaryColor: '#F59E0B',
-    badgeSymbol: 'Crown',
-    badgeType: 'crown',
-    description: 'Equipe tática e incansável pronta para dominar a fase de grupos.',
-    keyPlayers: ['Dominik', 'Kaiser', 'Vargas', 'Ochoa']
+    primaryColor: '#15803D',
+    secondaryColor: '#FFFFFF',
+    badgeSymbol: 'Lion',
+    badgeType: 'lion',
+    description: '4º do Grupo A. Garra leonina, disciplina tática e forte presença física.',
+    keyPlayers: ['Gyökeres', 'Pote', 'Inácio', 'Adán']
   },
 
-  // GRUPO B
+  // ================= GRUPO B ✅ =================
   {
     id: 'curacao',
     name: 'Curaçao',
@@ -61,32 +61,20 @@ export const TEAMS: Team[] = [
     secondaryColor: '#FACC15',
     badgeSymbol: 'Eagle',
     badgeType: 'eagle',
-    description: 'Seleção caribenha de alta velocidade e jogadas aéreas mortais.',
+    description: '1º do Grupo B. Seleção caribenha de alta velocidade e jogadas aéreas mortais.',
     keyPlayers: ['Bacuna', 'Kastaneer', 'Gorré', 'Room']
   },
   {
-    id: 'supergiants',
-    name: 'Super Giants',
-    shortName: 'SGI',
+    id: 'realmadrid',
+    name: 'Real Madrid CF',
+    shortName: 'RMA',
     group: 'B',
-    primaryColor: '#10B981',
-    secondaryColor: '#064E3B',
-    badgeSymbol: 'Shield',
-    badgeType: 'shield',
-    description: 'Gigantes da defesa com poder ofensivo avassalador.',
-    keyPlayers: ['Titan', 'Goliath', 'Goretzka', 'Courtois']
-  },
-  {
-    id: 'labamba',
-    name: 'FC Labamba',
-    shortName: 'LAB',
-    group: 'B',
-    primaryColor: '#F97316',
-    secondaryColor: '#BE185D',
-    badgeSymbol: 'Fire',
-    badgeType: 'fire',
-    description: 'Futebol quente com muita dancinha e gols espetaculares.',
-    keyPlayers: ['Ritchie Bamba', 'Samba Jr', 'Ronaldinho', 'Richarlison']
+    primaryColor: '#F59E0B',
+    secondaryColor: '#FFFFFF',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '2º do Grupo B. Tradição e mentalidade vencedora no futebol digital.',
+    keyPlayers: ['Vinicius Jr', 'Bellingham', 'Rodrygo', 'Valverde']
   },
   {
     id: 'levante',
@@ -97,22 +85,58 @@ export const TEAMS: Team[] = [
     secondaryColor: '#1E3A8A',
     badgeSymbol: 'Shield',
     badgeType: 'shield',
-    description: 'Resiliência espanhola e contra-ataques cirúrgicos.',
+    description: '3º do Grupo B. Resiliência e contra-ataques cirúrgicos.',
     keyPlayers: ['Morales', 'Campaña', 'Roger Martí', 'Aitor']
   },
-
-  // GRUPO C
   {
-    id: 'luck',
-    name: 'Luck',
-    shortName: 'LUK',
+    id: 'dreamsimbe',
+    name: 'Dream Simbe',
+    shortName: 'DSB',
+    group: 'B',
+    primaryColor: '#8B5CF6',
+    secondaryColor: '#4C1D95',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '4º do Grupo B. Elenco dos sonhos em busca de construir sua própria história no torneio.',
+    keyPlayers: ['Simbe', 'Neymar', 'Messi', 'Salah']
+  },
+
+  // ================= GRUPO C ✅ =================
+  {
+    id: 'dominator',
+    name: 'Dominator',
+    shortName: 'DOM',
     group: 'C',
-    primaryColor: '#16A34A',
-    secondaryColor: '#F43F5E',
-    badgeSymbol: 'Clover',
-    badgeType: 'clover',
-    description: 'A sorte está ao lado de quem joga com raça e precisão.',
-    keyPlayers: ['Lucky Luke', 'Felix', 'Sanches', 'Fortuna']
+    primaryColor: '#A855F7',
+    secondaryColor: '#F59E0B',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '1º do Grupo C. Equipe tática e incansável pronta para dominar o torneio.',
+    keyPlayers: ['Dominik', 'Kaiser', 'Vargas', 'Ochoa']
+  },
+  {
+    id: 'argentina',
+    name: 'Argentina FC',
+    shortName: 'ARG',
+    group: 'C',
+    primaryColor: '#7DD3FC',
+    secondaryColor: '#FFFFFF',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '2º do Grupo C. Raça, paixão e futebol coletivo de altíssimo nível.',
+    keyPlayers: ['Messi', 'Di Maria', 'Lautaro', 'Dibu Martínez']
+  },
+  {
+    id: 'labamba',
+    name: 'FC Labamba',
+    shortName: 'LAB',
+    group: 'C',
+    primaryColor: '#F97316',
+    secondaryColor: '#BE185D',
+    badgeSymbol: 'Fire',
+    badgeType: 'fire',
+    description: '3º do Grupo C. Futebol quente com muita dancinha e gols espetaculares.',
+    keyPlayers: ['Ritchie Bamba', 'Samba Jr', 'Ronaldinho', 'Richarlison']
   },
   {
     id: 'yuriman',
@@ -123,46 +147,46 @@ export const TEAMS: Team[] = [
     secondaryColor: '#4C1D95',
     badgeSymbol: 'Crown',
     badgeType: 'crown',
-    description: 'Time ousado com meias habilidosos e chutes de longa distância.',
+    description: '4º do Grupo C. Time ousado com meias habilidosos e chutes perigosos.',
     keyPlayers: ['Yuri Alberto', 'Yuri Boyka', 'Modric', 'Dybala']
   },
+
+  // ================= GRUPO D ✅ =================
   {
-    id: 'bayer_munchen',
-    name: 'Bayer de Munchen',
-    shortName: 'BMU',
-    group: 'C',
-    primaryColor: '#EF4444',
-    secondaryColor: '#1E293B',
-    badgeSymbol: 'Shield',
-    badgeType: 'shield',
-    description: 'Super-potência tática com futebol moderno e pressão alta.',
-    keyPlayers: ['Musiala', 'Kimmich', 'Coman', 'Upamecano']
+    id: 'soda',
+    name: 'Soda FC',
+    shortName: 'SOD',
+    group: 'D',
+    primaryColor: '#DC2626',
+    secondaryColor: '#F8FAFC',
+    badgeSymbol: 'Bottle',
+    badgeType: 'bottle',
+    description: '1º do Grupo D. Jogo efervescente e chutes perigosos de fora da área.',
+    keyPlayers: ['Soda King', 'Foden', 'De Bruyne', 'Ederson']
   },
   {
     id: 'zanix',
     name: 'Zanix',
     shortName: 'ZNX',
-    group: 'C',
+    group: 'D',
     primaryColor: '#0EA5E9',
     secondaryColor: '#0F172A',
     badgeSymbol: 'Lightning',
     badgeType: 'lightning',
-    description: 'Velocidade da luz nas pontas e transições fulminantes.',
+    description: '2º do Grupo D. Velocidade rápida nas pontas e transições fulminantes.',
     keyPlayers: ['Zane', 'Xavier', 'Mbappé', 'Walker']
   },
-
-  // GRUPO D
   {
-    id: 'realmadrid',
-    name: 'Real Madrid CF',
-    shortName: 'RMA',
+    id: 'luck',
+    name: 'Luck',
+    shortName: 'LUK',
     group: 'D',
-    primaryColor: '#F59E0B',
-    secondaryColor: '#FFFFFF',
-    badgeSymbol: 'Crown',
-    badgeType: 'crown',
-    description: 'Reis das viradas e maiores campeões do futebol mundial.',
-    keyPlayers: ['Vinicius Jr', 'Bellingham', 'Rodrygo', 'Valverde']
+    primaryColor: '#16A34A',
+    secondaryColor: '#F43F5E',
+    badgeSymbol: 'Clover',
+    badgeType: 'clover',
+    description: '3º do Grupo D. Equipe que joga com raça e precisão em busca da glória.',
+    keyPlayers: ['Lucky Luke', 'Felix', 'Sanches', 'Fortuna']
   },
   {
     id: 'adra',
@@ -173,32 +197,58 @@ export const TEAMS: Team[] = [
     secondaryColor: '#F59E0B',
     badgeSymbol: 'Shield',
     badgeType: 'shield',
-    description: 'Equipe misteriosa com conjunto forte e defesa impenetrável.',
+    description: '4º do Grupo D. Equipe com conjunto forte e defesa muito consistente.',
     keyPlayers: ['Adria', 'Ramos', 'Casemiro', 'Oblak']
   },
+
+  // ================= GRUPO E ✅ =================
   {
-    id: 'babymaxx',
-    name: 'Baby Maxx',
-    shortName: 'BMX',
-    group: 'D',
-    primaryColor: '#EC4899',
-    secondaryColor: '#8B5CF6',
+    id: 'celeste',
+    name: 'FC Celeste',
+    shortName: 'CEL',
+    group: 'E',
+    primaryColor: '#38BDF8',
+    secondaryColor: '#FFFFFF',
     badgeSymbol: 'Star',
     badgeType: 'star',
-    description: 'Jovens prodígios do DLS prontos para surpreender os veteranos.',
-    keyPlayers: ['Maxx', 'Endrick', 'Yamal', 'Gavi']
+    description: '1º do Grupo E. Futebol bonito e passes rápidos no gramado virtual.',
+    keyPlayers: ['Gabriel Celeste', 'Cavani', 'Arrascaeta', 'Muslera']
   },
   {
-    id: 'soda',
-    name: 'Soda FC',
-    shortName: 'SOD',
-    group: 'D',
-    primaryColor: '#DC2626',
-    secondaryColor: '#F8FAFC',
-    badgeSymbol: 'Bottle',
-    badgeType: 'bottle',
-    description: 'Refrescante e efervescente, especialista em golaços de fora da área.',
-    keyPlayers: ['Soda King', 'Foden', 'De Bruyne', 'Ederson']
+    id: 'bluelock',
+    name: 'Blue Lock',
+    shortName: 'BLK',
+    group: 'E',
+    primaryColor: '#0055FF',
+    secondaryColor: '#00E5FF',
+    badgeSymbol: 'Lock',
+    badgeType: 'lock',
+    description: '2º do Grupo E. Projeto focado no atacante mais implacável do torneio.',
+    keyPlayers: ['Isagi Yoichi', 'Rin Itoshi', 'Nagi Seishiro', 'Bachira Meguru']
+  },
+  {
+    id: 'realtiktak',
+    name: 'Real TIK TAK',
+    shortName: 'RTT',
+    group: 'E',
+    primaryColor: '#14B8A6',
+    secondaryColor: '#0F766E',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '3º do Grupo E. Especialistas em posse de bola e troca rápida de passes.',
+    keyPlayers: ['TikTak Master', 'Xavi', 'Pedri', 'Iniesta']
+  },
+  {
+    id: 'supergiants',
+    name: 'Super Giants',
+    shortName: 'SGI',
+    group: 'E',
+    primaryColor: '#10B981',
+    secondaryColor: '#064E3B',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '4º do Grupo E. Gigantes da defesa com poder ofensivo avassalador.',
+    keyPlayers: ['Titan', 'Goliath', 'Goretzka', 'Courtois']
   }
 ];
 
@@ -209,7 +259,6 @@ export const getTeamById = (id: string): Team => {
     id: id,
     name: id,
     shortName: id.slice(0, 3).toUpperCase(),
-    group: 'A',
     primaryColor: '#64748B',
     secondaryColor: '#0F172A',
     badgeSymbol: 'Shield',

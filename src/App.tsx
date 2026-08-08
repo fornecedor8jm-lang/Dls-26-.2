@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   BarChart3,
   CalendarDays,
   ChevronRight,
-  Gamepad2,
-  Globe2,
+  Dices,
   Menu,
   Medal,
   Newspaper,
@@ -12,43 +11,31 @@ import {
   Swords,
   Trophy,
   X,
-  Zap,
-  Flame,
+  Users,
+  ShieldCheck,
+  UserPlus,
+  MessageCircle,
   ShieldAlert,
-  Clock
+  Send,
+  CalendarCheck
 } from 'lucide-react';
-import { Match, Team } from './types';
+import { Team } from './types';
 import { TEAMS, getTeamById } from './data/teams';
-import { INITIAL_MATCHES } from './data/initialMatches';
-import { computePlayerStats, getTournamentSummary } from './utils/storage';
-import { calculateGroupStandings } from './utils/standings';
 import { FriendliesView } from './components/FriendliesView';
 import { TrailerSection } from './components/TrailerSection';
+import { ConfirmedTeamsView } from './components/ConfirmedTeamsView';
+import { AwaitingDrawState } from './components/AwaitingDrawState';
+import { GroupsSection } from './components/GroupsSection';
 
-type Tab = 'home' | 'friendlies' | 'matches' | 'table' | 'bracket' | 'stats';
+type Tab = 'home' | 'grupos' | 'participantes' | 'friendlies' | 'matches' | 'table' | 'bracket' | 'stats' | 'contact';
 
-const labelStage = (stage: Match['stage']) =>
-  ({
-    GROUP: 'Fase de grupos',
-    QUARTERS: 'Quartas de final',
-    SEMIS: 'Semifinal',
-    THIRD_PLACE: 'Disputa do 3º lugar',
-    FINAL: 'Grande final'
-  }[stage]);
-
-const formatDate = (value: string) =>
-  new Date(`${value}T12:00:00`)
-    .toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
-    .replace('.', '')
-    .toUpperCase();
-
-const OPENING_BRT = '15:30';
-const OPENING_MOZAMBIQUE = '20:30';
+const WHATSAPP_LINK = 'https://wa.me/55096991821516';
 
 const PLAYER_CONTACTS = [
   { team: 'FC Labamba', number: '877559587', href: 'tel:+258877559587' },
   { team: 'FC Celeste', number: '859136077', href: 'tel:+258859136077' },
-  { team: 'FC Bayern München', number: '840444822', href: 'tel:+258840444822' }
+  { team: 'FC Bayern München', number: '840444822', href: 'tel:+258840444822' },
+  { team: 'Fundador (Envio de Resultados / PV)', number: '+55 096 99182-1516', href: WHATSAPP_LINK }
 ];
 
 function Badge({ team, large = false }: { team: Team; large?: boolean }) {
@@ -91,260 +78,48 @@ function Title({
   );
 }
 
-const TBD_TEAM: Team = {
-  id: 'tbd',
-  name: 'A definir',
-  shortName: 'TBD',
-  group: 'A',
-  primaryColor: '#CBD5E1',
-  secondaryColor: '#64748B',
-  badgeSymbol: 'Shield',
-  badgeType: 'shield'
-};
-
-const PLAYOFF_SLOTS: Record<string, [string, string]> = {
-  m_qf1: ['1º Grupo A', '2º Grupo B'],
-  m_qf2: ['1º Grupo B', '2º Grupo A'],
-  m_qf3: ['1º Grupo C', '2º Grupo D'],
-  m_qf4: ['1º Grupo D', '2º Grupo C'],
-  m_sf1: ['Vencedor QF1', 'Vencedor QF2'],
-  m_sf2: ['Vencedor QF3', 'Vencedor QF4'],
-  m_3rd: ['Perdedor SF1', 'Perdedor SF2'],
-  m_final: ['Vencedor SF1', 'Vencedor SF2']
-};
-
-const GROUP_MATCHES = INITIAL_MATCHES.filter((item) => item.stage === 'GROUP');
-
-function finishedGroup(group: 'A' | 'B' | 'C' | 'D') {
-  return GROUP_MATCHES.filter((item) => item.group === group).every(
-    (item) =>
-      item.status === 'FINISHED' &&
-      item.homeScore !== undefined &&
-      item.awayScore !== undefined
-  );
-}
-
-function winnerOf(id: string) {
-  const game = INITIAL_MATCHES.find((item) => item.id === id);
-  if (
-    !game ||
-    game.status !== 'FINISHED' ||
-    game.homeScore === undefined ||
-    game.awayScore === undefined ||
-    game.homeScore === game.awayScore
-  )
-    return null;
-  return getTeamById(
-    game.homeScore > game.awayScore ? game.homeTeamId : game.awayTeamId
-  ).name;
-}
-
-function loserOf(id: string) {
-  const game = INITIAL_MATCHES.find((item) => item.id === id);
-  if (
-    !game ||
-    game.status !== 'FINISHED' ||
-    game.homeScore === undefined ||
-    game.awayScore === undefined ||
-    game.homeScore === game.awayScore
-  )
-    return null;
-  return getTeamById(
-    game.homeScore < game.awayScore ? game.homeTeamId : game.awayTeamId
-  ).name;
-}
-
-function resolvePlayoffLabels(match: Match): [string, string] | null {
-  const slots = PLAYOFF_SLOTS[match.id];
-  if (!slots) return null;
-  if (match.id.startsWith('m_qf')) {
-    const groups: Record<string, 'A' | 'B' | 'C' | 'D'> = {
-      m_qf1: 'A',
-      m_qf2: 'B',
-      m_qf3: 'C',
-      m_qf4: 'D'
-    };
-    const first = groups[match.id];
-    const second =
-      match.id === 'm_qf1'
-        ? 'B'
-        : match.id === 'm_qf2'
-        ? 'A'
-        : match.id === 'm_qf3'
-        ? 'D'
-        : 'C';
-    if (finishedGroup(first) && finishedGroup(second)) {
-      const one = calculateGroupStandings(
-        first,
-        INITIAL_MATCHES,
-        TEAMS.filter((team) => team.group === first)
-      )[0]?.team.name;
-      const two = calculateGroupStandings(
-        second,
-        INITIAL_MATCHES,
-        TEAMS.filter((team) => team.group === second)
-      )[1]?.team.name;
-      if (one && two) return [one, two];
-    }
-  }
-  const resolved =
-    match.id === 'm_sf1'
-      ? [winnerOf('m_qf1'), winnerOf('m_qf2')]
-      : match.id === 'm_sf2'
-      ? [winnerOf('m_qf3'), winnerOf('m_qf4')]
-      : match.id === 'm_3rd'
-      ? [loserOf('m_sf1'), loserOf('m_sf2')]
-      : match.id === 'm_final'
-      ? [winnerOf('m_sf1'), winnerOf('m_sf2')]
-      : null;
-  return resolved && resolved[0] && resolved[1]
-    ? [resolved[0], resolved[1]]
-    : slots;
-}
-
-function MatchCard({ match }: { match: Match; key?: string }) {
-  const home = getTeamById(match.homeTeamId);
-  const away = getTeamById(match.awayTeamId);
-  const slots = PLAYOFF_SLOTS[match.id];
-  const labels = resolvePlayoffLabels(match);
-  const homeTeam = slots ? TBD_TEAM : home;
-  const awayTeam = slots ? TBD_TEAM : away;
-  const homeName = labels?.[0] ?? home.name;
-  const awayName = labels?.[1] ?? away.name;
-
+function ContactList() {
   return (
-    <article className="match-card">
-      <div className="match-meta">
-        <span>
-          {labelStage(match.stage)}
-          {match.group ? ` · Grupo ${match.group}` : ''}
-        </span>
-        <span>
-          {formatDate(match.date)} · {match.timeBRT} BRT / {match.timeCAT} MOZ
-        </span>
-      </div>
-      <div className="match-teams">
+    <section className="contacts-section space-y-6">
+      <div className="section-title">
         <div>
-          <Badge team={homeTeam} large />
-          <strong>{homeName}</strong>
+          <span className="eyebrow">Atendimento & Inscrições</span>
+          <h2>Contato dos Jogadores e Fundador</h2>
         </div>
-        <div className="score">
-          {match.homeScore ?? '—'} <small>x</small> {match.awayScore ?? '—'}
-        </div>
-        <div>
-          <Badge team={awayTeam} large />
-          <strong>{awayName}</strong>
-        </div>
+        <span className="contacts-note">Inscrições & Envio de Resultados</span>
       </div>
-      <div className={`match-status ${match.status !== 'FINISHED' ? 'next' : ''}`}>
-        <span className="status-dot" />
-        {slots && match.status !== 'FINISHED'
-          ? 'A definir conforme a classificação'
-          : match.status === 'FINISHED'
-          ? 'Finalizado'
-          : match.status === 'LIVE'
-          ? 'Ao vivo'
-          : 'Agendado'}
-      </div>
-    </article>
-  );
-}
 
-function TomorrowSchedule({ matches }: { matches: Match[] }) {
-  const tomorrow = matches.filter(
-    (match) => match.date === '2026-08-08' && match.stage === 'GROUP'
-  );
-  return (
-    <section className="container schedule-section space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <Title
-            eyebrow="Cronograma oficial · 8 de agosto"
-            title="Abertura da Copa DLS 26"
-          />
-          <p className="page-lead">
-            Oito partidas válidas pela 1ª Rodada da Fase de Grupos.
+      {/* Primary Founder Contact Banner */}
+      <div className="bg-[#162A3D] text-white p-6 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-lg">
+        <div className="space-y-2">
+          <span className="text-emerald-400 font-extrabold text-xs uppercase tracking-widest inline-flex items-center gap-1.5">
+            <MessageCircle size={16} /> Envio de Placares no PV
+          </span>
+          <h3 className="text-xl font-black font-display">
+            WhatsApp Oficial da Administração da Copa DLS 26
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+            Os resultados dos jogos devem ser enviados via PV para o fundador, que atualizará o site com os dados e estatísticas oficiais do torneio.
           </p>
         </div>
+
         <a
-          className="schedule-download primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs py-2.5 px-4 rounded-lg transition-colors"
-          href="/cronograma-08-agosto.txt"
-          download
+          href={WHATSAPP_LINK}
+          target="_blank"
+          rel="noreferrer"
+          className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm py-3 px-6 rounded-xl inline-flex items-center gap-2 transition-colors shrink-0 shadow-md"
         >
-          📥 Baixar cronograma em TXT
+          <MessageCircle size={20} /> Entrar em Contato no WhatsApp
         </a>
       </div>
 
-      {/* Regra de Organização - Tabela de Cálculo */}
-      <div className="bg-[#162A3D] border border-[#2B4052] rounded-xl p-4 sm:p-5 text-white shadow-md space-y-3">
-        <div className="flex items-center gap-2 text-amber-400 font-extrabold text-xs uppercase tracking-widest">
-          <Clock size={16} />
-          <span>Regra de Organização · Tabela de Horários Corrigida</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm pt-1">
-          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
-            <span className="text-slate-400 text-[11px] block font-bold">Início da Competição</span>
-            <strong className="text-amber-400 text-base font-black">15:30 BRT | 20:30 MOZ</strong>
-          </div>
-          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
-            <span className="text-slate-400 text-[11px] block font-bold">Intervalo Entre Jogos</span>
-            <strong className="text-emerald-400 text-base font-black">40 minutos</strong>
-            <p className="text-[10px] text-slate-400">45m jogo + 10m intervalo + 5m transição</p>
-          </div>
-          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
-            <span className="text-slate-400 text-[11px] block font-bold">Fórmula de Fuso Horário</span>
-            <strong className="text-sky-300 text-xs sm:text-sm font-bold block">
-              Jogo N = 20:30 MOZ + (N-1) × 40 min
-            </strong>
-            <p className="text-[10px] text-slate-400">BRT = MOZ - 5 horas</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="schedule-list">
-        {tomorrow.map((match) => {
-          const home = getTeamById(match.homeTeamId);
-          const away = getTeamById(match.awayTeamId);
-          return (
-            <div className="schedule-row" key={match.id}>
-              <span className="schedule-time">
-                <strong>{match.timeBRT}</strong>
-                <small>BRT</small>
-                <em>{match.timeCAT}</em>
-                <small>MOZ</small>
-              </span>
-              <span className="schedule-group">Grupo {match.group}</span>
-              <strong className="schedule-team">{home.name}</strong>
-              <span className="schedule-vs">×</span>
-              <strong className="schedule-team">{away.name}</strong>
-              <span className="schedule-status">Agendado</span>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function ContactList() {
-  return (
-    <section className="contacts-section">
-      <div className="section-title">
-        <div>
-          <span className="eyebrow">Contato dos jogadores</span>
-          <h2>Quem está jogando</h2>
-        </div>
-        <span className="contacts-note">Lista pública · somente leitura</span>
-      </div>
-      <p className="page-lead">
-        Os números de telefone exibidos foram informados pelos próprios
-        jogadores. A responsabilidade pelos dados é dos jogadores, não do site.
-      </p>
       <div className="contact-grid">
         {PLAYER_CONTACTS.map((contact) => (
           <a
             className="contact-card"
             href={contact.href}
+            target={contact.href.startsWith('http') ? '_blank' : '_self'}
+            rel="noreferrer"
             key={contact.number}
           >
             <span className="contact-icon">
@@ -352,7 +127,7 @@ function ContactList() {
             </span>
             <span>
               <strong>{contact.team}</strong>
-              <small>Jogador da Copa DLS 26</small>
+              <small>Contato para o torneio</small>
             </span>
             <b>{contact.number}</b>
           </a>
@@ -362,89 +137,10 @@ function ContactList() {
   );
 }
 
-function Standings({
-  group,
-  matches,
-  onTeam,
-  onSelectGroup
-}: {
-  group: 'A' | 'B' | 'C' | 'D';
-  matches: Match[];
-  onTeam: (team: Team) => void;
-  onSelectGroup: (g: 'A' | 'B' | 'C' | 'D') => void;
-}) {
-  const rows = calculateGroupStandings(
-    group,
-    matches,
-    TEAMS.filter((team) => team.group === group)
-  );
-  return (
-    <div className="table-shell">
-      <div className="group-tabs">
-        {(['A', 'B', 'C', 'D'] as const).map((item) => (
-          <button
-            key={item}
-            className={item === group ? 'active' : ''}
-            onClick={() => onSelectGroup(item)}
-          >
-            {`Grupo ${item}`}
-          </button>
-        ))}
-      </div>
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Equipe</th>
-              <th>J</th>
-              <th>V</th>
-              <th>SG</th>
-              <th>PTS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.team.id} onClick={() => onTeam(row.team)}>
-                <td>
-                  <span className={`rank ${row.rank <= 2 ? 'highlight' : ''}`}>
-                    {row.rank}
-                  </span>
-                </td>
-                <td>
-                  <div className="team-cell">
-                    <Badge team={row.team} />
-                    <span>{row.team.name}</span>
-                  </div>
-                </td>
-                <td>{row.played}</td>
-                <td>{row.won}</td>
-                <td
-                  className={
-                    row.goalDifference >= 0 ? 'positive' : 'negative'
-                  }
-                >
-                  {row.goalDifference > 0 ? '+' : ''}
-                  {row.goalDifference}
-                </td>
-                <td>
-                  <strong>{row.points}</strong>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [tab, setTab] = useState<Tab>('home');
-  const matches = INITIAL_MATCHES;
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [group, setGroup] = useState<'A' | 'B' | 'C' | 'D'>('A');
 
   const go = (next: Tab) => {
     setTab(next);
@@ -452,39 +148,34 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const summary = useMemo(() => getTournamentSummary(matches), [matches]);
-  const playerStats = useMemo(
-    () => computePlayerStats(matches).slice(0, 5),
-    [matches]
-  );
-  const upcoming = matches
-    .filter((match) => match.status !== 'FINISHED')
-    .slice(0, 4);
-  const heroMatch = upcoming[0] ?? matches[0];
-
   const nav = [
     { id: 'home' as Tab, label: 'Início', icon: Trophy },
+    { id: 'grupos' as Tab, label: 'Grupos (A-H)', icon: Dices },
+    { id: 'participantes' as Tab, label: 'Participantes (20)', icon: Users },
     { id: 'friendlies' as Tab, label: 'Amistosos', icon: Newspaper },
     { id: 'matches' as Tab, label: 'Jogos', icon: CalendarDays },
     { id: 'table' as Tab, label: 'Tabela', icon: BarChart3 },
     { id: 'bracket' as Tab, label: 'Mata-mata', icon: Swords },
-    { id: 'stats' as Tab, label: 'Números', icon: Medal }
+    { id: 'stats' as Tab, label: 'Números', icon: Medal },
+    { id: 'contact' as Tab, label: 'Contato PV', icon: MessageCircle }
   ];
 
   return (
     <div className="app-shell">
+      {/* Announcement Banner */}
       <div className="announcement">
         <div className="container announcement-inner">
           <span>
-            <Zap size={14} /> Copa DLS 26 · Dream League Soccer
+            🏆 <b>COPA DLS 2026</b> · Portal Oficial
           </span>
           <span className="announcement-right">
-            Abertura: 08/08/2026 · {OPENING_BRT} Brasília / {OPENING_MOZAMBIQUE}{' '}
-            Moçambique <span className="live-pill">EDIÇÃO 2026</span>
+            🎲 <b>GRUPOS A, B, C, D, E DEFINIDOS</b> · F, G, H Sorteando
+            <span className="live-pill bg-amber-500 text-slate-950 font-black ml-2">20/32 VAGAS</span>
           </span>
         </div>
       </div>
 
+      {/* Header */}
       <header className="site-header">
         <div className="container header-inner">
           <button className="brand" onClick={() => go('home')}>
@@ -514,10 +205,14 @@ export default function App() {
             ))}
           </nav>
           <div className="header-actions">
-            <div className="timezone">
-              <Globe2 size={15} />
-              15:30 BRT · 20:30 MOZ
-            </div>
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-2 px-3 rounded-lg transition-colors"
+            >
+              <MessageCircle size={15} /> Chamar no PV
+            </a>
             <button
               className="icon-button menu-button"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -532,55 +227,70 @@ export default function App() {
       <main>
         {tab === 'home' && (
           <>
+            {/* Banner / Hero Principal */}
             <section className="hero">
               <div className="container hero-grid">
                 <div className="hero-copy">
                   <span className="kicker">
                     <span className="kicker-line" /> O campeonato da sua liga
                   </span>
-                  <h1>
-                    Seu time.
-                    <br />
-                    <span>Sua lenda.</span>
-                    <br />
-                    Seu DLS.
+                  <h1 className="text-3xl sm:text-5xl font-black font-display text-white tracking-tight">
+                    🏆 COPA DLS 2026
                   </h1>
-                  <p>
-                    Acompanhe a Copa DLS 26 com os dados oficiais do torneio:
-                    equipes, grupos, partidas, placares, mata-mata e
-                    estatísticas reais do Dream League Soccer.
+                  <p className="text-base sm:text-lg text-slate-200 leading-relaxed pt-1">
+                    Definição oficial dos Grupos A, B, C, D e E! Confira as 20 equipes sorteadas e acompanhe as vagas nos Grupos F, G e H.
                   </p>
-                  <div className="hero-buttons">
+
+                  {/* Status Box */}
+                  <div className="bg-[#162A3D]/90 border border-[#2B4052] p-4 rounded-xl space-y-3 mt-4">
+                    <div className="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-wider">
+                      <Dices size={16} />
+                      <span>Status do Campeonato: Grupos A, B, C, D, E Definidos ✅</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold pt-1">
+                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Grupos Fechados</span>
+                        <strong className="text-emerald-400 text-sm font-black">5 Grupos (A-E)</strong>
+                      </div>
+                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Aguardando Sorteio</span>
+                        <strong className="text-amber-400 text-sm font-black">3 Grupos (F-H)</strong>
+                      </div>
+                      <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
+                        <span className="text-slate-400 block text-[10px]">Total de Vagas</span>
+                        <strong className="text-sky-300 text-sm font-black">32 Equipes</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="hero-buttons pt-2">
                     <button
-                      className="primary-button"
-                      onClick={() => go('matches')}
+                      className="primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black"
+                      onClick={() => go('grupos')}
                     >
-                      Ver próximos jogos <ChevronRight size={17} />
+                      <Dices size={18} /> Ver Grupos A-H <ChevronRight size={17} />
                     </button>
-                    <button
-                      className="secondary-button"
-                      onClick={() => go('table')}
+                    <a
+                      href={WHATSAPP_LINK}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="secondary-button inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-bold"
                     >
-                      Explorar tabela
-                    </button>
+                      <MessageCircle size={18} className="text-emerald-400" /> Enviar Resultado / PV
+                    </a>
                   </div>
                 </div>
+
                 <div className="hero-visual">
                   <img
                     src="/assets/dls-team.jpg"
                     alt="Interface de Dream League Soccer"
                   />
                   <div className="hero-note">
-                    <span className="note-label">PRÓXIMO JOGO</span>
-                    <strong>
-                      {getTeamById(heroMatch.homeTeamId).shortName}{' '}
-                      <small>vs</small>{' '}
-                      {getTeamById(heroMatch.awayTeamId).shortName}
-                    </strong>
-                    <span>
-                      {formatDate(heroMatch.date)} · {heroMatch.timeBRT} BRT /{' '}
-                      {heroMatch.timeCAT} MOZ
-                    </span>
+                    <span className="note-label">SITUAÇÃO DO TORNEIO</span>
+                    <strong>🎲 Grupos A, B, C, D, E ✅</strong>
+                    <span>20 Equipes Chaveadas nos Grupos</span>
                   </div>
                   <div className="hero-stamp">
                     <Trophy size={21} />
@@ -599,6 +309,69 @@ export default function App() {
               <TrailerSection />
             </section>
 
+            {/* Seção: Grupos A, B, C, D, E, F, G, H */}
+            <section className="container section-block">
+              <GroupsSection onSelectTeam={setSelectedTeam} />
+            </section>
+
+            {/* Seção: Participantes Confirmados (Cards) */}
+            <section className="container section-block">
+              <ConfirmedTeamsView onSelectTeam={setSelectedTeam} />
+            </section>
+
+            {/* Seção: Próximas Etapas */}
+            <section className="container section-block">
+              <div className="bg-[#162A3D] border border-[#2B4052] p-6 sm:p-8 rounded-2xl text-white space-y-6 shadow-xl">
+                <div className="space-y-1">
+                  <span className="text-amber-400 font-extrabold text-xs uppercase tracking-widest inline-flex items-center gap-1.5">
+                    <CalendarCheck size={16} /> Planejamento Oficial
+                  </span>
+                  <h2 className="text-2xl font-black font-display">Próximas Etapas da Copa DLS 2026</h2>
+                  <p className="text-slate-300 text-sm">
+                    Acompanhe o fluxo oficial de organização antes da bola rolar.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-[#0E1A26] p-5 rounded-xl border border-emerald-500/50 space-y-2 relative">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm">
+                      1
+                    </div>
+                    <strong className="text-white text-base block font-extrabold">
+                      ✅ Grupos A, B, C, D Definidos
+                    </strong>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Sorteio concluído para as primeiras 16 equipes. Grupos E, F, G e H em andamento.
+                    </p>
+                  </div>
+
+                  <div className="bg-[#0E1A26] p-5 rounded-xl border border-[#2B4052] space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-sm">
+                      2
+                    </div>
+                    <strong className="text-white text-base block font-extrabold">
+                      🎲 Sorteio dos Grupos E a H
+                    </strong>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Preenchimento das 12 vagas restantes para fechar o chaveamento completo de 32 participantes.
+                    </p>
+                  </div>
+
+                  <div className="bg-[#0E1A26] p-5 rounded-xl border border-[#2B4052] space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-sky-500 text-slate-950 font-black flex items-center justify-center text-sm">
+                      3
+                    </div>
+                    <strong className="text-white text-base block font-extrabold">
+                      📅 Tabela e Confrontos
+                    </strong>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Lançamento da tabela de partidas e início dos jogos com envio dos placares via PV.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Friendly Announcement Banner on Home */}
             <section className="container section-block">
               <div className="bg-[#162A3D] text-white p-5 sm:p-6 rounded-2xl border border-[#2B4052] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
@@ -611,7 +384,7 @@ export default function App() {
                     Resultados da Pré-Temporada & Reportagens
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    ⚠️ Os jogos preparatórios não possuem validade para a pontuação e classificação da Copa DLS. Confira todas as reportagens, estatísticas e resultados da aba de Amistosos.
+                    ⚠️ Os jogos preparatórios não possuem validade para a pontuação da Copa DLS. Confira todas as reportagens e resultados na aba de Amistosos.
                   </p>
                 </div>
                 <button
@@ -623,61 +396,20 @@ export default function App() {
               </div>
             </section>
 
-            <section className="container section-block">
-              <Title
-                eyebrow="A rodada vem aí"
-                title="Próximos confrontos"
-                action="Ver todos os jogos"
-                onAction={() => go('matches')}
-              />
-              <div className="match-grid">
-                {upcoming.slice(0, 2).map((match) => (
-                  <MatchCard key={match.id} match={match} />
-                ))}
-              </div>
-            </section>
-
-            <TomorrowSchedule matches={matches} />
-
-            <section className="container split-section">
-              <div>
-                <Title
-                  eyebrow="Classificação"
-                  title="O caminho para a taça"
-                  action="Tabela completa"
-                  onAction={() => go('table')}
-                />
-                <Standings
-                  group={group}
-                  matches={matches}
-                  onTeam={setSelectedTeam}
-                  onSelectGroup={setGroup}
-                />
-              </div>
-              <aside className="feature-card">
-                <img
-                  src="/assets/dls-match.jpg"
-                  alt="Partida de Dream League Soccer"
-                />
-                <div className="feature-overlay">
-                  <span className="eyebrow">MOMENTO DLS</span>
-                  <h3>{summary.matchesPlayed} partidas já calculadas</h3>
-                  <p>
-                    {summary.totalGoals} gols registrados · média de{' '}
-                    {summary.avgGoals} por jogo.
-                  </p>
-                  <button
-                    onClick={() => go('stats')}
-                    className="text-button light"
-                  >
-                    Ver estatísticas <ChevronRight size={16} />
-                  </button>
-                </div>
-              </aside>
-            </section>
-
             <ContactList />
           </>
+        )}
+
+        {tab === 'grupos' && (
+          <section className="container page-section">
+            <GroupsSection onSelectTeam={setSelectedTeam} />
+          </section>
+        )}
+
+        {tab === 'participantes' && (
+          <section className="container page-section">
+            <ConfirmedTeamsView onSelectTeam={setSelectedTeam} />
+          </section>
         )}
 
         {tab === 'friendlies' && (
@@ -689,72 +421,28 @@ export default function App() {
 
         {tab === 'matches' && (
           <section className="container page-section">
-            <Title eyebrow="Calendário oficial" title="Todos os jogos" />
-            <div className="filter-row">
-              <span>{summary.totalMatches} partidas · horários oficiais</span>
-              <span className="timezone">
-                <Globe2 size={15} /> 15:30 Brasília · 20:30 Moçambique
-              </span>
-            </div>
-            <div className="match-list">
-              {matches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
-            </div>
+            <AwaitingDrawState
+              title="Calendário e Jogos da Copa DLS 2026"
+              description="A lista de partidas da fase de grupos e horários das rodadas será divulgada imediatamente após a finalização do sorteio de todos os grupos."
+            />
           </section>
         )}
 
         {tab === 'table' && (
           <section className="container page-section">
-            <Title
-              eyebrow="Classificação oficial"
-              title="Tabela da Copa DLS 26"
-            />
-            <p className="page-lead">
-              Dados calculados a partir dos placares salvos no repositório.
-              Clique em uma equipe para ver seus detalhes.
-            </p>
-            <div className="table-switcher">
-              {(['A', 'B', 'C', 'D'] as const).map((item) => (
-                <button
-                  key={item}
-                  className={group === item ? 'active' : ''}
-                  onClick={() => setGroup(item)}
-                >
-                  Grupo {item}
-                </button>
-              ))}
-            </div>
-            <Standings
-              group={group}
-              matches={matches}
-              onTeam={setSelectedTeam}
-              onSelectGroup={setGroup}
+            <AwaitingDrawState
+              title="Tabela de Classificação em Breve"
+              description="A pontuação, saldo de gols e a posição de cada grupo serão habilitadas assim que a competição for iniciada."
             />
           </section>
         )}
 
         {tab === 'bracket' && (
           <section className="container page-section">
-            <Title eyebrow="Fase decisiva" title="Caminho até a taça" />
-            <p className="page-lead">
-              Os dois primeiros de cada grupo avançam. O chaveamento abaixo é
-              preenchido conforme os pontos e os resultados oficiais.
-            </p>
-            <div className="bracket">
-              {(['QUARTERS', 'SEMIS', 'THIRD_PLACE', 'FINAL'] as const).map(
-                (stage) => (
-                  <div key={stage}>
-                    <span className="eyebrow">{labelStage(stage)}</span>
-                    {matches
-                      .filter((match) => match.stage === stage)
-                      .map((match) => (
-                        <MatchCard key={match.id} match={match} />
-                      ))}
-                  </div>
-                )
-              )}
-            </div>
+            <AwaitingDrawState
+              title="Chaveamento do Mata-Mata"
+              description="O diagrama das quartas de final, semifinais e grande final será preenchido após o encerramento da fase de grupos."
+            />
           </section>
         )}
 
@@ -762,56 +450,39 @@ export default function App() {
           <section className="container page-section">
             <Title
               eyebrow="Números da competição"
-              title="Estatísticas DLS"
+              title="Estatísticas DLS 2026"
             />
             <div className="stats-hero">
               <div>
-                <span className="eyebrow">Resumo oficial</span>
+                <span className="eyebrow">Aguardando Início Oficial</span>
                 <h3>
-                  {summary.totalGoals}
+                  20
                   <br />
-                  <em>gols registrados</em>
+                  <em>equipes confirmadas</em>
                 </h3>
               </div>
               <BarChart3 size={48} />
             </div>
             <div className="summary-grid">
               <div>
-                <strong>{summary.matchesPlayed}</strong>
-                <span>Jogos finalizados</span>
+                <strong>20</strong>
+                <span>Times Confirmados</span>
               </div>
               <div>
-                <strong>{summary.avgGoals}</strong>
-                <span>Média de gols</span>
+                <strong>12</strong>
+                <span>Vagas Abertas</span>
               </div>
               <div>
-                <strong>{summary.teamsCount}</strong>
-                <span>Equipes</span>
+                <strong>32</strong>
+                <span>Vagas Totais</span>
               </div>
             </div>
-            <div className="leaderboard">
-              <h3>Artilharia registrada</h3>
-              {playerStats.length ? (
-                playerStats.map((player, index) => (
-                  <div className="leader-row" key={player.id}>
-                    <span className="leader-rank">0{index + 1}</span>
-                    <div className="player-avatar">
-                      {player.name.slice(0, 1)}
-                    </div>
-                    <div>
-                      <strong>{player.name}</strong>
-                      <span>{getTeamById(player.teamId).name}</span>
-                    </div>
-                    <b>
-                      {player.goals}
-                      <small> GOLS</small>
-                    </b>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum gol registrado ainda.</p>
-              )}
-            </div>
+          </section>
+        )}
+
+        {tab === 'contact' && (
+          <section className="container page-section">
+            <ContactList />
           </section>
         )}
       </main>
@@ -833,10 +504,18 @@ export default function App() {
             </span>
           </button>
           <p>Feito por quem joga. Para quem joga.</p>
-          <span className="footer-readonly">Atualizações somente via GitHub</span>
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noreferrer"
+            className="text-emerald-400 hover:underline font-bold text-xs"
+          >
+            Envio de resultados via PV (+55 096 99182-1516)
+          </a>
         </div>
       </footer>
 
+      {/* Team Details Modal */}
       {selectedTeam && (
         <div
           className="modal-backdrop"
@@ -853,17 +532,19 @@ export default function App() {
               <X size={18} />
             </button>
             <Badge team={selectedTeam} large />
-            <span className="eyebrow">Grupo {selectedTeam.group}</span>
+            <span className="eyebrow">
+              {selectedTeam.group ? `Grupo ${selectedTeam.group} · Confirmado` : 'Status: Confirmado (Aguardando Sorteio)'}
+            </span>
             <h2>{selectedTeam.name}</h2>
             <p>
               {selectedTeam.description ||
-                'Equipe inscrita na Copa DLS 26.'}
+                'Equipe confirmada na Copa DLS 26.'}
             </p>
             <div className="modal-players">
-              <span>Jogadores-chave</span>
+              <span>Destaques da equipe</span>
               <strong>
                 {selectedTeam.keyPlayers?.join(' · ') ||
-                  'Dados não informados'}
+                  'Dados do elenco não informados'}
               </strong>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Play, Tv, Clock, Globe2, Sparkles } from 'lucide-react';
+import { Tv, Sparkles, Dices, Trophy } from 'lucide-react';
 
 export const TRAILER_URL = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663853833735/cQoOOVhljskxBemW.mp4';
 
@@ -18,13 +18,13 @@ export function TrailerSection() {
               🎬 Trailer Oficial · Copa DLS 2026
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-white font-display pt-1">
-              Horários Oficiais & Transmissão nos Fusos BRT e CAT
+              O Maior Torneio da Nossa Liga
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-300 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-            <Globe2 size={15} className="text-amber-400" />
-            <span>BRT (Brasília) · CAT (Moçambique)</span>
+          <div className="flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/30">
+            <Dices size={15} className="text-amber-400" />
+            <span>Aguardando Sorteio dos Grupos</span>
           </div>
         </div>
 
@@ -45,28 +45,28 @@ export function TrailerSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800/90 flex items-start gap-3">
             <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-lg shrink-0">
-              <Clock size={20} />
+              <Trophy size={20} />
             </div>
             <div className="space-y-1 text-xs sm:text-sm">
               <strong className="text-white font-black block">
-                Horário do Brasil (BRT / UTC-3)
+                20 Equipes Confirmadas
               </strong>
               <p className="text-slate-400 leading-relaxed">
-                Acompanhe os jogos a partir das <strong>15:30 BRT</strong>. Os horários locais brasileiros garantem a cobertura ao vivo do torneio.
+                As melhores equipes estão preparadas. Fique atento para o sorteio oficial dos grupos e o anúncio dos confrontos.
               </p>
             </div>
           </div>
 
           <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800/90 flex items-start gap-3">
-            <div className="p-2.5 bg-orange-500/20 text-orange-400 rounded-lg shrink-0">
-              <Globe2 size={20} />
+            <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-lg shrink-0">
+              <Sparkles size={20} />
             </div>
             <div className="space-y-1 text-xs sm:text-sm">
               <strong className="text-white font-black block">
-                Horário de Moçambique / CAT (UTC+2)
+                12 Vagas Restantes Abertas
               </strong>
               <p className="text-slate-400 leading-relaxed">
-                Transmitido às <strong>20:30 CAT</strong> para os torcedores em Moçambique, Angola e África Central.
+                Ainda dá tempo de registrar seu time! As inscrições continuam abertas até completar o quadro de 32 participantes.
               </p>
             </div>
           </div>
