@@ -7,7 +7,7 @@ import { Clock, Edit3, Trophy, Flame } from 'lucide-react';
 interface MatchCardProps {
   match: Match;
   timezone: TimezoneMode;
-  onEditMatch: (match: Match) => void;
+  onEditMatch?: (match: Match) => void;
   onSelectTeam: (team: Team) => void;
 }
 
@@ -66,13 +66,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             </span>
           )}
 
-          <button
-            onClick={() => onEditMatch(match)}
-            className="p-1 rounded bg-[#0B1F33] hover:bg-[#12283e] text-slate-300 transition-colors border border-[#2B4052]"
-            title="Lançamento manual de placar (Admin)"
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-          </button>
+          {onEditMatch && (
+            <button
+              onClick={() => onEditMatch(match)}
+              className="p-1 rounded bg-[#0B1F33] hover:bg-[#12283e] text-slate-300 transition-colors border border-[#2B4052]"
+              title="Lançamento manual de placar (Admin)"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 

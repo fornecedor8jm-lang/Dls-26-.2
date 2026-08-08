@@ -142,7 +142,7 @@ export const GroupStandingsView: React.FC<GroupStandingsProps> = ({
                             {/* Rank */}
                             <td className="py-3 px-3 text-center font-bold">
                               <span className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-black bg-[#0B1F33] text-slate-300 border border-[#2B4052]">
-                                {idx + 1}
+                                {row.played > 0 ? idx + 1 : '-'}
                               </span>
                             </td>
 

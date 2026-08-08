@@ -43,10 +43,10 @@ type Tab = 'home' | 'grupos' | 'participantes' | 'friendlies' | 'matches' | 'tab
 const WHATSAPP_LINK = 'https://wa.me/55096991821516';
 
 const PLAYER_CONTACTS = [
-  { team: 'FC Labamba', number: '877559587', href: 'tel:+258877559587' },
-  { team: 'FC Celeste', number: '859136077', href: 'tel:+258859136077' },
-  { team: 'FC Bayern München', number: '840444822', href: 'tel:+258840444822' },
-  { team: 'Fundador (Envio de Resultados / PV)', number: '+55 096 99182-1516', href: WHATSAPP_LINK }
+  { team: 'FC Labamba', number: '877559587', href: 'tel:+258877559587', type: 'PHONE', actionLabel: '📞 Ligar por Telefone' },
+  { team: 'FC Celeste', number: '859136077', href: 'tel:+258859136077', type: 'PHONE', actionLabel: '📞 Ligar por Telefone' },
+  { team: 'FC Bayern München', number: '840444822', href: 'tel:+258840444822', type: 'PHONE', actionLabel: '📞 Ligar por Telefone' },
+  { team: 'Fundador (Envio de Placares / PV)', number: '+55 096 99182-1516', href: WHATSAPP_LINK, type: 'WHATSAPP', actionLabel: '💬 Abrir Conversa no WhatsApp' }
 ];
 
 function Badge({ team, large = false }: { team: Team; large?: boolean }) {
@@ -140,20 +140,24 @@ function ContactList() {
       <div className="contact-grid">
         {PLAYER_CONTACTS.map((contact) => (
           <a
-            className="contact-card"
+            className="contact-card hover:border-amber-400 transition-all cursor-pointer group"
             href={contact.href}
             target={contact.href.startsWith('http') ? '_blank' : '_self'}
             rel="noreferrer"
             key={contact.number}
           >
             <span className="contact-icon">
-              <Phone size={18} />
+              {contact.type === 'WHATSAPP' ? (
+                <MessageCircle size={18} className="text-emerald-500" />
+              ) : (
+                <Phone size={18} className="text-sky-500" />
+              )}
             </span>
             <span>
               <strong>{contact.team}</strong>
-              <small>Contato para o torneio</small>
+              <small className="block text-slate-500 text-[11px] font-semibold mt-0.5">{contact.actionLabel}</small>
             </span>
-            <b>{contact.number}</b>
+            <b className="font-mono text-sm">{contact.number}</b>
           </a>
         ))}
       </div>
@@ -549,18 +553,7 @@ export default function App() {
           </section>
         )}
 
-        {/* Global Exit/Return Button at the bottom of inner tabs */}
-        {tab !== 'home' && (
-          <div className="container py-8 flex justify-center border-t border-slate-200 mt-8">
-            <button
-              onClick={() => go('home')}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm px-6 py-3 rounded-xl transition-all shadow-md cursor-pointer"
-            >
-              <Home size={18} />
-              <span>Voltar ao Menu Principal</span>
-            </button>
-          </div>
-        )}
+
       </main>
 
       <footer>
@@ -579,7 +572,10 @@ export default function App() {
               </strong>
             </span>
           </button>
-          <p>Feito por quem joga. Para quem joga. · Horários oficiais em CAT (Moçambique)</p>
+          <p>
+            Feito por quem joga. Para quem joga. · Horários exibidos em{' '}
+            <b>{timezone === 'CAT' ? 'CAT (Moçambique)' : 'BRT (Brasília)'}</b>
+          </p>
           <a
             href={WHATSAPP_LINK}
             target="_blank"

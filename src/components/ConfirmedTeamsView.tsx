@@ -54,7 +54,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
       {/* Filter Tabs & Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <span className="eyebrow text-amber-600">Inscrições Abertas</span>
+          <span className="eyebrow text-amber-600">Participantes Confirmados</span>
           <h2 className="text-2xl font-black font-display text-slate-900">
             Lista de Participantes da Copa DLS 26
           </h2>
@@ -67,7 +67,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
             }`}
             onClick={() => setFilter('all')}
           >
-            Todos (32 Vagas)
+            Todos os Participantes ({confirmedCount})
           </button>
           <button
             className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -126,8 +126,18 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <span className="text-[11px] font-medium text-slate-400">Ver detalhes do time</span>
-                <ChevronRight size={14} className="text-amber-500 group-hover:translate-x-1 transition-transform" />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectTeam(team);
+                  }}
+                  className="inline-flex items-center justify-between w-full text-xs font-bold text-amber-600 hover:text-amber-700 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 rounded px-1 py-0.5"
+                  aria-label={`Ver detalhes da equipe ${team.name}`}
+                >
+                  <span>Ver detalhes do time</span>
+                  <ChevronRight size={14} className="text-amber-500 group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
             </div>
           ))}

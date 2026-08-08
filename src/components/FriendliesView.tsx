@@ -31,8 +31,9 @@ function FriendlyBadge({ team }: { team: Team }) {
 }
 
 export function FriendliesView({ onSelectTeam }: { onSelectTeam?: (team: Team) => void }) {
-  const [showCommunique, setShowCommunique] = useState(true);
+  const [showCommunique, setShowCommunique] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<FriendlyMatch | null>(null);
+  const [friendlyTab, setFriendlyTab] = useState<'ALL' | 'MATCHES' | 'NEWS'>('ALL');
 
   // Stats calculation
   const totalMatches = FRIENDLY_MATCHES.length;
@@ -167,7 +168,7 @@ export function FriendliesView({ onSelectTeam }: { onSelectTeam?: (team: Team) =
 
           <div className="bg-[#FAF7F2] p-4 rounded-xl border border-[#E5DFD3] text-center">
             <strong className="text-2xl sm:text-3xl font-black text-[#172033] block font-display">
-              8x1
+              5x1
             </strong>
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Maior Goleada (Baby Maxx)
@@ -176,96 +177,133 @@ export function FriendliesView({ onSelectTeam }: { onSelectTeam?: (team: Team) =
         </div>
       </section>
 
+      {/* Sub-navigation Tabs */}
+      <div className="flex items-center gap-2 bg-[#162A3D] p-1.5 rounded-xl border border-[#2B4052]">
+        <button
+          onClick={() => setFriendlyTab('ALL')}
+          className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${
+            friendlyTab === 'ALL'
+              ? 'bg-amber-500 text-slate-950 shadow-sm'
+              : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          Visão Completa
+        </button>
+        <button
+          onClick={() => setFriendlyTab('MATCHES')}
+          className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${
+            friendlyTab === 'MATCHES'
+              ? 'bg-amber-500 text-slate-950 shadow-sm'
+              : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          🏟️ Apenas Plocares ({FRIENDLY_MATCHES.length})
+        </button>
+        <button
+          onClick={() => setFriendlyTab('NEWS')}
+          className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${
+            friendlyTab === 'NEWS'
+              ? 'bg-amber-500 text-slate-950 shadow-sm'
+              : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          📰 Reportagens Detalhadas
+        </button>
+      </div>
+
       {/* 🏟️ Resultados dos Amistosos & 🔄 Jogos de ida e volta */}
-      <section className="space-y-4">
-        <div className="section-title">
-          <div>
-            <span className="eyebrow">Resultados dos jogos preparatórios</span>
-            <h2>🏟️ Resultados dos Amistosos</h2>
+      {(friendlyTab === 'ALL' || friendlyTab === 'MATCHES') && (
+        <section className="space-y-4">
+          <div className="section-title">
+            <div>
+              <span className="eyebrow">Resultados dos jogos preparatórios</span>
+              <h2>🏟️ Resultados dos Amistosos</h2>
+            </div>
+            <span className="text-xs font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+              Pré-Temporada
+            </span>
           </div>
-          <span className="text-xs font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
-            Pré-Temporada
-          </span>
-        </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {FRIENDLY_MATCHES.map((match) => {
-            const home = getTeamById(match.homeTeamId);
-            const away = getTeamById(match.awayTeamId);
-            return (
-              <article
-                key={match.id}
-                className="match-card hover:border-amber-400 transition-colors cursor-pointer"
-                onClick={() => setSelectedMatch(match)}
-              >
-                <div className="match-meta flex-wrap gap-1.5">
-                  <span className="flex items-center gap-1.5 font-bold text-amber-700 shrink-0">
-                    <Flame size={14} />
-                    {match.type === 'LEG_1'
-                      ? 'Jogo de ida'
-                      : match.type === 'LEG_2'
-                      ? 'Jogo de volta'
-                      : 'Jogo único'}
-                  </span>
-                  {match.aggregateScore && (
-                    <span className="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded border border-amber-300 shrink-0">
-                      Agregado: {match.aggregateScore}
+          <div className="grid gap-4 md:grid-cols-2">
+            {FRIENDLY_MATCHES.map((match) => {
+              const home = getTeamById(match.homeTeamId);
+              const away = getTeamById(match.awayTeamId);
+              return (
+                <article
+                  key={match.id}
+                  className="match-card hover:border-amber-400 transition-colors cursor-pointer"
+                  onClick={() => setSelectedMatch(match)}
+                >
+                  <div className="match-meta flex-wrap gap-1.5">
+                    <span className="flex items-center gap-1.5 font-bold text-amber-700 shrink-0">
+                      <Flame size={14} />
+                      {match.type === 'LEG_1'
+                        ? 'Jogo de ida'
+                        : match.type === 'LEG_2'
+                        ? 'Jogo de volta'
+                        : 'Jogo único'}
                     </span>
-                  )}
-                </div>
-
-                <div className="match-teams">
-                  <div
-                    className="cursor-pointer hover:opacity-80"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectTeam?.(home);
-                    }}
-                  >
-                    <FriendlyBadge team={home} />
-                    <strong>{home.name}</strong>
+                    {match.aggregateScore && (
+                      <span className="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded border border-amber-300 shrink-0">
+                        Agregado: {match.aggregateScore}
+                      </span>
+                    )}
                   </div>
 
-                  <div className="score">
-                    {match.homeScore} <small>x</small> {match.awayScore}
+                  <div className="match-teams">
+                    <div
+                      className="cursor-pointer hover:opacity-80"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectTeam?.(home);
+                      }}
+                    >
+                      <FriendlyBadge team={home} />
+                      <strong>{home.name}</strong>
+                    </div>
+
+                    <div className="score">
+                      {match.homeScore} <small>x</small> {match.awayScore}
+                    </div>
+
+                    <div
+                      className="cursor-pointer hover:opacity-80"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectTeam?.(away);
+                      }}
+                    >
+                      <FriendlyBadge team={away} />
+                      <strong>{away.name}</strong>
+                    </div>
                   </div>
 
-                  <div
-                    className="cursor-pointer hover:opacity-80"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectTeam?.(away);
-                    }}
-                  >
-                    <FriendlyBadge team={away} />
-                    <strong>{away.name}</strong>
+                  <div className="mt-3 pt-3 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-600">
+                    <span className="font-semibold text-slate-800 min-w-0 flex-1 truncate pr-1">
+                      {match.title}
+                    </span>
+                    <span className="text-amber-600 font-bold shrink-0 hover:underline">
+                      Ver reportagem →
+                    </span>
                   </div>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-600">
-                  <span className="font-semibold text-slate-800 min-w-0 flex-1 truncate pr-1">
-                    {match.title}
-                  </span>
-                  <span className="text-amber-600 font-bold shrink-0 hover:underline">
-                    Ver reportagem →
-                  </span>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* 📰 Notícias, Comunicados & 📸 Destaques */}
-      <section className="space-y-4">
-        <div className="section-title">
-          <div>
-            <span className="eyebrow">Reportagens da pré-temporada</span>
-            <h2>📰 Notícias e Comunicados</h2>
+      {(friendlyTab === 'ALL' || friendlyTab === 'NEWS') && (
+        <section className="space-y-4">
+          <div className="section-title">
+            <div>
+              <span className="eyebrow">Reportagens da pré-temporada</span>
+              <h2>📰 Notícias e Comunicados</h2>
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
+          <div className="space-y-4">
           {FRIENDLY_MATCHES.map((match) => {
             const home = getTeamById(match.homeTeamId);
             const away = getTeamById(match.awayTeamId);
@@ -320,6 +358,7 @@ export function FriendliesView({ onSelectTeam }: { onSelectTeam?: (team: Team) =
           })}
         </div>
       </section>
+      )}
 
       {/* 📅 Próximos Amistosos */}
       <section className="bg-slate-900 text-white p-6 rounded-xl border border-slate-800 space-y-3">

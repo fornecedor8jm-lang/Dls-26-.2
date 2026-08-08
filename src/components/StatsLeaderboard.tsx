@@ -18,6 +18,7 @@ export const StatsLeaderboard: React.FC<StatsLeaderboardProps> = ({
 }) => {
   const topScorers = computePlayerStats(matches);
   const summary = getTournamentSummary(matches);
+  const totalMatchesPlayed = matches.filter((m) => m.status === 'FINISHED' || m.status === 'LIVE').length;
 
   // Calculate team goals for attack and defense
   const teamStats = teams.map((team) => {
@@ -155,28 +156,35 @@ export const StatsLeaderboard: React.FC<StatsLeaderboardProps> = ({
           </div>
 
           <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1 divide-y divide-[#2B4052]">
-            {bestAttack.slice(0, 8).map((st, idx) => (
-              <div
-                key={st.team.id}
-                onClick={() => onSelectTeam(st.team)}
-                className="flex items-center justify-between pt-2.5 pb-1 px-1 hover:bg-[#0B1F33] rounded cursor-pointer transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded bg-[#0B1F33] border border-[#2B4052] text-white font-extrabold text-xs flex items-center justify-center font-mono">
-                    {idx + 1}º
-                  </span>
-                  <TeamBadge team={st.team} size="sm" />
-                  <span className="font-bold text-white text-xs">{st.team.name}</span>
-                </div>
-
-                <div className="text-right">
-                  <span className="font-mono font-black text-[#138A4B] text-sm block">
-                    {st.gp} Gols
-                  </span>
-                  <span className="text-[10px] text-slate-400">{st.games} partidas</span>
-                </div>
+            {totalMatchesPlayed === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 space-y-2">
+                <p className="font-bold text-amber-400">⏳ Nenhuma partida disputada ainda</p>
+                <p>O ranking de melhores ataques será atualizado após os jogos da 1ª Rodada.</p>
               </div>
-            ))}
+            ) : (
+              bestAttack.slice(0, 8).map((st, idx) => (
+                <div
+                  key={st.team.id}
+                  onClick={() => onSelectTeam(st.team)}
+                  className="flex items-center justify-between pt-2.5 pb-1 px-1 hover:bg-[#0B1F33] rounded cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded bg-[#0B1F33] border border-[#2B4052] text-white font-extrabold text-xs flex items-center justify-center font-mono">
+                      {idx + 1}º
+                    </span>
+                    <TeamBadge team={st.team} size="sm" />
+                    <span className="font-bold text-white text-xs">{st.team.name}</span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="font-mono font-black text-[#138A4B] text-sm block">
+                      {st.gp} Gols
+                    </span>
+                    <span className="text-[10px] text-slate-400">{st.games} partidas</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -190,28 +198,35 @@ export const StatsLeaderboard: React.FC<StatsLeaderboardProps> = ({
           </div>
 
           <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1 divide-y divide-[#2B4052]">
-            {bestDefense.slice(0, 8).map((st, idx) => (
-              <div
-                key={st.team.id}
-                onClick={() => onSelectTeam(st.team)}
-                className="flex items-center justify-between pt-2.5 pb-1 px-1 hover:bg-[#0B1F33] rounded cursor-pointer transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded bg-[#0B1F33] border border-[#2B4052] text-white font-extrabold text-xs flex items-center justify-center font-mono">
-                    {idx + 1}º
-                  </span>
-                  <TeamBadge team={st.team} size="sm" />
-                  <span className="font-bold text-white text-xs">{st.team.name}</span>
-                </div>
-
-                <div className="text-right">
-                  <span className="font-mono font-black text-white text-sm block">
-                    {st.gc} Sofridos
-                  </span>
-                  <span className="text-[10px] text-slate-400">{st.games} partidas</span>
-                </div>
+            {totalMatchesPlayed === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 space-y-2">
+                <p className="font-bold text-amber-400">⏳ Nenhuma partida disputada ainda</p>
+                <p>O ranking de defesas menos vazadas será atualizado após os jogos da 1ª Rodada.</p>
               </div>
-            ))}
+            ) : (
+              bestDefense.slice(0, 8).map((st, idx) => (
+                <div
+                  key={st.team.id}
+                  onClick={() => onSelectTeam(st.team)}
+                  className="flex items-center justify-between pt-2.5 pb-1 px-1 hover:bg-[#0B1F33] rounded cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded bg-[#0B1F33] border border-[#2B4052] text-white font-extrabold text-xs flex items-center justify-center font-mono">
+                      {idx + 1}º
+                    </span>
+                    <TeamBadge team={st.team} size="sm" />
+                    <span className="font-bold text-white text-xs">{st.team.name}</span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="font-mono font-black text-white text-sm block">
+                      {st.gc} Sofridos
+                    </span>
+                    <span className="text-[10px] text-slate-400">{st.games} partidas</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

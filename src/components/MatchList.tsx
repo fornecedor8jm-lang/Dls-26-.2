@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GroupName, Match, Team, TimezoneMode } from '../types';
 import { MatchCard } from './MatchCard';
-import { Calendar, Filter, RefreshCw, AlertCircle, ArrowLeft, Home } from 'lucide-react';
+import { Calendar, Filter, RefreshCw, AlertCircle, Shield } from 'lucide-react';
 
 interface MatchListProps {
   matches: Match[];
@@ -17,11 +17,11 @@ export const MatchList: React.FC<MatchListProps> = ({
   timezone,
   onEditMatch,
   onSelectTeam,
-  onResetMatches,
-  onGoHome
+  onResetMatches
 }) => {
   const [stageFilter, setStageFilter] = useState<'ALL' | 'R1' | 'R2' | 'R3' | 'KNOCKOUT'>('ALL');
   const [groupFilter, setGroupFilter] = useState<GroupName | 'ALL'>('ALL');
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
   const filteredMatches = matches.filter((m) => {
     // Stage filter
@@ -36,26 +36,53 @@ export const MatchList: React.FC<MatchListProps> = ({
     return true;
   });
 
+  const getEmptyStateMessage = () => {
+    if (stageFilter === 'R2') {
+      return '📅 A Rodada 2 (09/08) ainda não possui confrontos cadastrados na tabela oficial.';
+    }
+    if (stageFilter === 'R3') {
+      return '📅 A Rodada 3 (10/08) ainda não possui confrontos cadastrados na tabela oficial.';
+    }
+    if (stageFilter === 'KNOCKOUT') {
+      return '⚔️ Os confrontos do Mata-Mata serão definidos após o encerramento da Fase de Grupos.';
+    }
+    if (groupFilter !== 'ALL') {
+      return `Nenhuma partida cadastrada para o Grupo ${groupFilter} nesta rodada.`;
+    }
+    return 'Nenhuma partida encontrada com os filtros selecionados.';
+  };
+
   return (
     <div className="space-y-5">
-      {/* Top Return Button & Notice */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {onGoHome && (
-          <button
-            onClick={onGoHome}
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shrink-0 cursor-pointer"
-          >
-            <ArrowLeft size={16} />
-            <span>Voltar ao Menu Principal (Início)</span>
-          </button>
-        )}
-
-        <div className="flex-1 bg-[#162A3D] border border-[#2B4052] p-3 rounded-xl text-white flex items-center gap-2.5">
+      {/* Notice Banner */}
+      <div className="bg-[#162A3D] border border-[#2B4052] p-3.5 rounded-xl text-white flex items-center justify-between gap-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
           <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
           <p className="text-xs text-slate-200">
-            Programação oficial da Copa DLS 26 em Horários de Moçambique (CAT).
+            Programação oficial da Copa DLS 26 ({timezone === 'CAT' ? 'CAT / Moçambique' : 'BRT / Brasília'}).
           </p>
         </div>
+
+        {/* Admin Mode Toggle */}
+        <button
+          onClick={() => {
+            if (!isAdminMode) {
+              const pass = window.prompt('Digite a senha de administrador ou clique em OK para ativar visualização Admin:');
+              if (pass !== null) setIsAdminMode(true);
+            } else {
+              setIsAdminMode(false);
+            }
+          }}
+          className={`px-2.5 py-1 rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-colors border ${
+            isAdminMode
+              ? 'bg-amber-500 text-slate-950 border-amber-400'
+              : 'bg-[#0B1F33] text-slate-400 border-[#2B4052] hover:text-white'
+          }`}
+          title="Modo Organizador / Admin"
+        >
+          <Shield size={12} />
+          <span>{isAdminMode ? 'Admin Ativo' : 'Área Admin'}</span>
+        </button>
       </div>
 
       {/* Control Toolbar */}
@@ -114,7 +141,7 @@ export const MatchList: React.FC<MatchListProps> = ({
           </button>
         </div>
 
-        {/* Secondary filters */}
+        {/* Secondary filters & Admin Controls */}
         <div className="flex items-center gap-2">
           {/* Group Filter */}
           <div className="flex items-center gap-1 bg-[#0B1F33] p-1 rounded-lg border border-[#2B4052] text-xs font-bold text-slate-300">
@@ -136,14 +163,16 @@ export const MatchList: React.FC<MatchListProps> = ({
             </select>
           </div>
 
-          {/* Reset button */}
-          <button
-            onClick={onResetMatches}
-            className="p-1.5 rounded-lg bg-[#0B1F33] hover:bg-[#12283e] text-slate-300 transition-colors border border-[#2B4052]"
-            title="Restaurar tabela original de jogos"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
+          {/* Reset button - Only rendered in Admin Mode */}
+          {isAdminMode && (
+            <button
+              onClick={onResetMatches}
+              className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors border border-amber-500/40"
+              title="Restaurar tabela original de jogos (Admin)"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -151,7 +180,9 @@ export const MatchList: React.FC<MatchListProps> = ({
       {filteredMatches.length === 0 ? (
         <div className="text-center p-12 bg-[#162A3D] rounded-xl border border-[#2B4052] text-slate-300 space-y-3">
           <Calendar className="w-10 h-10 mx-auto text-slate-400" />
-          <p className="font-bold text-white">Nenhuma partida encontrada com os filtros selecionados.</p>
+          <p className="font-bold text-white leading-relaxed max-w-md mx-auto">
+            {getEmptyStateMessage()}
+          </p>
           <button
             onClick={() => {
               setStageFilter('ALL');
@@ -159,7 +190,7 @@ export const MatchList: React.FC<MatchListProps> = ({
             }}
             className="px-4 py-2 bg-[#138A4B] text-white font-bold text-xs rounded-lg hover:bg-[#0f733e] transition-colors"
           >
-            Limpar Filtros
+            Ver Todos os Jogos
           </button>
         </div>
       ) : (
@@ -169,7 +200,7 @@ export const MatchList: React.FC<MatchListProps> = ({
               key={match.id}
               match={match}
               timezone={timezone}
-              onEditMatch={onEditMatch}
+              onEditMatch={isAdminMode ? onEditMatch : undefined}
               onSelectTeam={onSelectTeam}
             />
           ))}

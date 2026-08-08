@@ -66,7 +66,7 @@ export const FRIENDLY_MATCHES: FriendlyMatch[] = [
     type: 'SINGLE',
     title: 'Show ofensivo do Baby Maxx com 5 a 1 sobre o FC Celeste',
     report:
-      'Em noite inspirada de seus atacantes, o Baby Maxx aplicou a maior goleada da pré-temporada ao bater o FC Celeste por 5 a 1. A equipe mostrou que chega forte para o Grupo D.',
+      'Em noite inspirada de seus atacantes, o Baby Maxx aplicou a maior goleada da pré-temporada ao bater o FC Celeste por 5 a 1. A equipe mostrou que chega forte para o Grupo A.',
     highlights: ['5 gols marcados', 'Pressionamento alto sem dar chances', 'Atuação de gala do setor ofensivo']
   },
   {

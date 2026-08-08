@@ -28,7 +28,7 @@ export const TEAMS: Team[] = [
   },
   {
     id: 'babymaxx',
-    name: 'Baby Maxxx',
+    name: 'Baby Maxx',
     shortName: 'BMX',
     group: 'A',
     primaryColor: '#EC4899',
