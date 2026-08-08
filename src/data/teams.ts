@@ -203,16 +203,16 @@ export const TEAMS: Team[] = [
 
   // ================= GRUPO E ✅ =================
   {
-    id: 'celeste',
-    name: 'FC Celeste',
-    shortName: 'CEL',
+    id: 'barcelona',
+    name: 'Barcelona',
+    shortName: 'FCB',
     group: 'E',
-    primaryColor: '#38BDF8',
-    secondaryColor: '#FFFFFF',
-    badgeSymbol: 'Star',
-    badgeType: 'star',
-    description: '1º do Grupo E. Futebol bonito e passes rápidos no gramado virtual.',
-    keyPlayers: ['Gabriel Celeste', 'Cavani', 'Arrascaeta', 'Muslera']
+    primaryColor: '#A855F7',
+    secondaryColor: '#1E3A8A',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '1º do Grupo E. Tiki-taka de alto nível, toque rápido e ataque fulminante.',
+    keyPlayers: ['Lewandowski', 'Lamine Yamal', 'Pedri', 'Ter Stegen']
   },
   {
     id: 'bluelock',
@@ -327,16 +327,16 @@ export const TEAMS: Team[] = [
     keyPlayers: ['Moreno', 'Parejo', 'Baena', 'Asenjo']
   },
   {
-    id: 'barcelona',
-    name: 'Barcelona',
-    shortName: 'FCB',
+    id: 'celeste',
+    name: 'FC Celeste',
+    shortName: 'CEL',
     group: 'G',
-    primaryColor: '#A855F7',
-    secondaryColor: '#1E3A8A',
-    badgeSymbol: 'Shield',
-    badgeType: 'shield',
-    description: '3º do Grupo G. Tiki-taka de alto nível, toque rápido e toque de mestre.',
-    keyPlayers: ['Lewandowski', 'Lamine Yamal', 'Pedri', 'Ter Stegen']
+    primaryColor: '#38BDF8',
+    secondaryColor: '#FFFFFF',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '3º do Grupo G. Futebol bonito e passes rápidos no gramado virtual.',
+    keyPlayers: ['Gabriel Celeste', 'Cavani', 'Arrascaeta', 'Muslera']
   },
   {
     id: 'barca_fc',
