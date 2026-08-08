@@ -59,12 +59,12 @@ const GROUPS_DATA = [
   },
   {
     name: 'GRUPO F',
-    status: 'AWAITING',
+    status: 'CONFIRMED',
     teams: [
-      { pos: '1º', text: '(Sorteando...)' },
-      { pos: '2º', text: '(Sorteando...)' },
-      { pos: '3º', text: '(Sorteando...)' },
-      { pos: '4º', text: '(Sorteando...)' },
+      { pos: '1º', teamId: 'liverpool' },
+      { pos: '2º', teamId: 'sc_ninjas' },
+      { pos: '3º', teamId: 'mocambique' },
+      { pos: '4º', teamId: 'botafogo' },
     ],
   },
   {
@@ -106,16 +106,16 @@ export function GroupsSection({ onSelectTeam }: GroupsSectionProps) {
             Fase de Grupos · Copa DLS 2026
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 pt-1">
-            5 Grupos definidos (A, B, C, D, E) e 3 Grupos aguardando sorteio das vagas restantes (F, G, H).
+            6 Grupos definidos (A, B, C, D, E, F) e 2 Grupos aguardando sorteio das vagas restantes (G, H).
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1.5 rounded-lg border border-emerald-300">
-            <ShieldCheck size={14} /> 5 Grupos Definidos
+            <ShieldCheck size={14} /> 6 Grupos Definidos
           </span>
           <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 text-xs font-black px-3 py-1.5 rounded-lg border border-amber-300">
-            <Dices size={14} /> 3 Sorteando...
+            <Dices size={14} /> 2 Sorteando...
           </span>
         </div>
       </div>

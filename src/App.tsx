@@ -169,8 +169,8 @@ export default function App() {
             🏆 <b>COPA DLS 2026</b> · Portal Oficial
           </span>
           <span className="announcement-right">
-            🎲 <b>GRUPOS A, B, C, D, E DEFINIDOS</b> · F, G, H Sorteando
-            <span className="live-pill bg-amber-500 text-slate-950 font-black ml-2">20/32 VAGAS</span>
+            🎲 <b>GRUPOS A, B, C, D, E, F DEFINIDOS</b> · G, H Sorteando
+            <span className="live-pill bg-amber-500 text-slate-950 font-black ml-2">24/32 VAGAS</span>
           </span>
         </div>
       </div>
@@ -238,24 +238,24 @@ export default function App() {
                     🏆 COPA DLS 2026
                   </h1>
                   <p className="text-base sm:text-lg text-slate-200 leading-relaxed pt-1">
-                    Definição oficial dos Grupos A, B, C, D e E! Confira as 20 equipes sorteadas e acompanhe as vagas nos Grupos F, G e H.
+                    Definição oficial dos Grupos A, B, C, D, E e F! Confira as 24 equipes sorteadas e acompanhe as vagas nos Grupos G e H.
                   </p>
 
                   {/* Status Box */}
                   <div className="bg-[#162A3D]/90 border border-[#2B4052] p-4 rounded-xl space-y-3 mt-4">
                     <div className="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-wider">
                       <Dices size={16} />
-                      <span>Status do Campeonato: Grupos A, B, C, D, E Definidos ✅</span>
+                      <span>Status do Campeonato: Grupos A, B, C, D, E, F Definidos ✅</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold pt-1">
                       <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
                         <span className="text-slate-400 block text-[10px]">Grupos Fechados</span>
-                        <strong className="text-emerald-400 text-sm font-black">5 Grupos (A-E)</strong>
+                        <strong className="text-emerald-400 text-sm font-black">6 Grupos (A-F)</strong>
                       </div>
                       <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
                         <span className="text-slate-400 block text-[10px]">Aguardando Sorteio</span>
-                        <strong className="text-amber-400 text-sm font-black">3 Grupos (F-H)</strong>
+                        <strong className="text-amber-400 text-sm font-black">2 Grupos (G-H)</strong>
                       </div>
                       <div className="bg-[#0E1A26] p-2.5 rounded-lg border border-[#2B4052]">
                         <span className="text-slate-400 block text-[10px]">Total de Vagas</span>
@@ -289,8 +289,8 @@ export default function App() {
                   />
                   <div className="hero-note">
                     <span className="note-label">SITUAÇÃO DO TORNEIO</span>
-                    <strong>🎲 Grupos A, B, C, D, E ✅</strong>
-                    <span>20 Equipes Chaveadas nos Grupos</span>
+                    <strong>🎲 Grupos A, B, C, D, E, F ✅</strong>
+                    <span>24 Equipes Chaveadas nos Grupos</span>
                   </div>
                   <div className="hero-stamp">
                     <Trophy size={21} />

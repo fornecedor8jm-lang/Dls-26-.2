@@ -249,6 +249,56 @@ export const TEAMS: Team[] = [
     badgeType: 'shield',
     description: '4º do Grupo E. Gigantes da defesa com poder ofensivo avassalador.',
     keyPlayers: ['Titan', 'Goliath', 'Goretzka', 'Courtois']
+  },
+
+  // ================= GRUPO F ✅ =================
+  {
+    id: 'liverpool',
+    name: 'Liverpool',
+    shortName: 'LIV',
+    group: 'F',
+    primaryColor: '#C8102E',
+    secondaryColor: '#F6EB61',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '1º do Grupo F. Tradicional gigante com ritmo intenso e ataque devastador.',
+    keyPlayers: ['Salah', 'Van Dijk', 'Darwin', 'Alisson']
+  },
+  {
+    id: 'sc_ninjas',
+    name: 'SC Ninjas',
+    shortName: 'NIN',
+    group: 'F',
+    primaryColor: '#1E1B4B',
+    secondaryColor: '#818CF8',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '2º do Grupo F. Furtivos e precisos nos contra-ataques mortais.',
+    keyPlayers: ['Ninja Red', 'Shadow', 'Kuro', 'Hayate']
+  },
+  {
+    id: 'mocambique',
+    name: 'Moçambique',
+    shortName: 'MOZ',
+    group: 'F',
+    primaryColor: '#007A3D',
+    secondaryColor: '#DA291C',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '3º do Grupo F. Seleção com muita raça, velocidade e apoio da torcida.',
+    keyPlayers: ['Geny Catamo', 'Reinildo', 'Dominguês', 'Witi']
+  },
+  {
+    id: 'botafogo',
+    name: 'Botafogo',
+    shortName: 'BOT',
+    group: 'F',
+    primaryColor: '#000000',
+    secondaryColor: '#FFFFFF',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '4º do Grupo F. A Estrela Solitária em busca da glória na Copa DLS 26.',
+    keyPlayers: ['Tiquinho', 'Luiz Henrique', 'Savarino', 'John']
   }
 ];
 

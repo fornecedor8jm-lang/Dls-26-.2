@@ -12,8 +12,9 @@ const WHATSAPP_LINK = 'https://wa.me/55096991821516';
 export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
   const [filter, setFilter] = useState<'all' | 'confirmed' | 'available'>('all');
 
-  const openSlotsCount = 12; // 32 - 20 = 12
-  const availableSlotsArray = Array.from({ length: openSlotsCount }, (_, i) => i + 21);
+  const confirmedCount = TEAMS.length;
+  const openSlotsCount = Math.max(0, 32 - confirmedCount);
+  const availableSlotsArray = Array.from({ length: openSlotsCount }, (_, i) => i + confirmedCount + 1);
 
   return (
     <div className="space-y-8">
@@ -25,7 +26,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
           </div>
           <div>
             <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Equipes Confirmadas</span>
-            <strong className="text-2xl font-black font-display text-emerald-400">20 / 32</strong>
+            <strong className="text-2xl font-black font-display text-emerald-400">{confirmedCount} / 32</strong>
           </div>
         </div>
 
@@ -35,7 +36,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
           </div>
           <div>
             <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Vagas Disponíveis</span>
-            <strong className="text-2xl font-black font-display text-amber-400">12 Restantes</strong>
+            <strong className="text-2xl font-black font-display text-amber-400">{openSlotsCount} Restantes</strong>
           </div>
         </div>
 
@@ -45,7 +46,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
           </div>
           <div>
             <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Status Atual</span>
-            <strong className="text-lg font-black font-display text-sky-300">Aguardando Sorteio</strong>
+            <strong className="text-lg font-black font-display text-sky-300">Grupos A-F Definidos</strong>
           </div>
         </div>
       </div>
@@ -74,7 +75,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
             }`}
             onClick={() => setFilter('confirmed')}
           >
-            Confirmados (20)
+            Confirmados ({confirmedCount})
           </button>
           <button
             className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -82,7 +83,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
             }`}
             onClick={() => setFilter('available')}
           >
-            Vagas Abertas (12)
+            Vagas Abertas ({openSlotsCount})
           </button>
         </div>
       </div>
