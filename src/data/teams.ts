@@ -16,7 +16,7 @@ export const TEAMS: Team[] = [
   },
   {
     id: 'bayer_munchen',
-    name: 'Bayer de Munchen',
+    name: 'Bayern de Munchen',
     shortName: 'BMU',
     group: 'A',
     primaryColor: '#EF4444',
@@ -277,16 +277,16 @@ export const TEAMS: Team[] = [
     keyPlayers: ['Ninja Red', 'Shadow', 'Kuro', 'Hayate']
   },
   {
-    id: 'mocambique',
-    name: 'Moçambique',
-    shortName: 'MOZ',
+    id: 'levante_f',
+    name: 'Levante',
+    shortName: 'LVT',
     group: 'F',
-    primaryColor: '#007A3D',
-    secondaryColor: '#DA291C',
+    primaryColor: '#0369A1',
+    secondaryColor: '#E0F2FE',
     badgeSymbol: 'Shield',
     badgeType: 'shield',
-    description: '3º do Grupo F. Seleção com muita raça, velocidade e apoio da torcida.',
-    keyPlayers: ['Geny Catamo', 'Reinildo', 'Dominguês', 'Witi']
+    description: '3º do Grupo F. Equipe tática focada na posse de bola e jogadas ensaiadas.',
+    keyPlayers: ['Morales', 'Campaña', 'Pepa', 'Dani']
   },
   {
     id: 'botafogo',
@@ -299,6 +299,106 @@ export const TEAMS: Team[] = [
     badgeType: 'star',
     description: '4º do Grupo F. A Estrela Solitária em busca da glória na Copa DLS 26.',
     keyPlayers: ['Tiquinho', 'Luiz Henrique', 'Savarino', 'John']
+  },
+
+  // ================= GRUPO G ✅ =================
+  {
+    id: 'madridista',
+    name: 'Madridista',
+    shortName: 'MAD',
+    group: 'G',
+    primaryColor: '#4F46E5',
+    secondaryColor: '#E0E7FF',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '1º do Grupo G. Apaixonados pelo futebol vencedor e estilo galáctico.',
+    keyPlayers: ['Raul', 'Zidane', 'Figo', 'Casillas']
+  },
+  {
+    id: 'villareal',
+    name: 'Villa Real',
+    shortName: 'VIL',
+    group: 'G',
+    primaryColor: '#EAB308',
+    secondaryColor: '#1E293B',
+    badgeSymbol: 'Star',
+    badgeType: 'star',
+    description: '2º do Grupo G. O Submarino Amarelo em busca de surpreender os gigantes.',
+    keyPlayers: ['Moreno', 'Parejo', 'Baena', 'Asenjo']
+  },
+  {
+    id: 'barcelona',
+    name: 'Barcelona',
+    shortName: 'FCB',
+    group: 'G',
+    primaryColor: '#A855F7',
+    secondaryColor: '#1E3A8A',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '3º do Grupo G. Tiki-taka de alto nível, toque rápido e toque de mestre.',
+    keyPlayers: ['Lewandowski', 'Lamine Yamal', 'Pedri', 'Ter Stegen']
+  },
+  {
+    id: 'barca_fc',
+    name: 'Barça FC',
+    shortName: 'BAR',
+    group: 'G',
+    primaryColor: '#9333EA',
+    secondaryColor: '#F43F5E',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '4º do Grupo G. Estilo clássico, habilidade individual e ataques letais.',
+    keyPlayers: ['Raphinha', 'Gavi', 'De Jong', 'Araujo']
+  },
+
+  // ================= GRUPO H ✅ =================
+  {
+    id: 'mocambique',
+    name: 'Moçambique',
+    shortName: 'MOZ',
+    group: 'H',
+    primaryColor: '#007A3D',
+    secondaryColor: '#DA291C',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '1º do Grupo H. Seleção da casa com garra, velocidade e apoio do público.',
+    keyPlayers: ['Geny Catamo', 'Reinildo', 'Dominguês', 'Witi']
+  },
+  {
+    id: 'b_munich',
+    name: 'B Munich',
+    shortName: 'BMN',
+    group: 'H',
+    primaryColor: '#DC2626',
+    secondaryColor: '#0284C7',
+    badgeSymbol: 'Shield',
+    badgeType: 'shield',
+    description: '2º do Grupo H. Potência alemã em busca de impor seu ritmo dominante.',
+    keyPlayers: ['Kane', 'Musiala', 'Sané', 'Neuer']
+  },
+  {
+    id: 'geovane',
+    name: 'Geovane',
+    shortName: 'GEO',
+    group: 'H',
+    primaryColor: '#F59E0B',
+    secondaryColor: '#1E1B4B',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '3º do Grupo H. Elenco comandado por Geovane com tática cirúrgica.',
+    keyPlayers: ['Geovane', 'Kaka', 'Ronaldinho', 'Ronaldo']
+  },
+  {
+    id: 'ovelhas_majestosas',
+    name: 'Ovelhas Majestosas',
+    shortName: 'OMA',
+    group: 'H',
+    primaryColor: '#84CC16',
+    secondaryColor: '#1E293B',
+    badgeSymbol: 'Crown',
+    badgeType: 'crown',
+    description: '4º do Grupo H. Futebol leve, divertido e extremamente perigoso nos contra-ataques.',
+    keyPlayers: ['Majestic', 'Flock Master', 'Shepherd', 'Golden']
   }
 ];
 

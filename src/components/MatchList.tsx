@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GroupName, Match, Team, TimezoneMode } from '../types';
 import { MatchCard } from './MatchCard';
-import { Calendar, Filter, RefreshCw, AlertCircle } from 'lucide-react';
+import { Calendar, Filter, RefreshCw, AlertCircle, ArrowLeft, Home } from 'lucide-react';
 
 interface MatchListProps {
   matches: Match[];
@@ -9,6 +9,7 @@ interface MatchListProps {
   onEditMatch: (match: Match) => void;
   onSelectTeam: (team: Team) => void;
   onResetMatches: () => void;
+  onGoHome?: () => void;
 }
 
 export const MatchList: React.FC<MatchListProps> = ({
@@ -16,7 +17,8 @@ export const MatchList: React.FC<MatchListProps> = ({
   timezone,
   onEditMatch,
   onSelectTeam,
-  onResetMatches
+  onResetMatches,
+  onGoHome
 }) => {
   const [stageFilter, setStageFilter] = useState<'ALL' | 'R1' | 'R2' | 'R3' | 'KNOCKOUT'>('ALL');
   const [groupFilter, setGroupFilter] = useState<GroupName | 'ALL'>('ALL');
@@ -36,15 +38,22 @@ export const MatchList: React.FC<MatchListProps> = ({
 
   return (
     <div className="space-y-5">
-      {/* Pre-tournament Results Notice Box */}
-      <div className="bg-[#162A3D] border border-[#2B4052] p-4 rounded-xl text-white flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-        <div className="space-y-0.5">
-          <h3 className="font-extrabold text-xs text-amber-400 uppercase tracking-wider font-display">
-            Programação Oficial de Jogos
-          </h3>
+      {/* Top Return Button & Notice */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shrink-0 cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Voltar ao Menu Principal (Início)</span>
+          </button>
+        )}
+
+        <div className="flex-1 bg-[#162A3D] border border-[#2B4052] p-3 rounded-xl text-white flex items-center gap-2.5">
+          <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
           <p className="text-xs text-slate-200">
-            Nenhuma partida disputada. Os resultados serão publicados após o início oficial da Copa DLS 26 em 08 de agosto de 2026.
+            Programação oficial da Copa DLS 26 em Horários de Moçambique (CAT).
           </p>
         </div>
       </div>
@@ -120,6 +129,10 @@ export const MatchList: React.FC<MatchListProps> = ({
               <option value="B" className="bg-[#0B1F33]">Grupo B</option>
               <option value="C" className="bg-[#0B1F33]">Grupo C</option>
               <option value="D" className="bg-[#0B1F33]">Grupo D</option>
+              <option value="E" className="bg-[#0B1F33]">Grupo E</option>
+              <option value="F" className="bg-[#0B1F33]">Grupo F</option>
+              <option value="G" className="bg-[#0B1F33]">Grupo G</option>
+              <option value="H" className="bg-[#0B1F33]">Grupo H</option>
             </select>
           </div>
 

@@ -46,7 +46,7 @@ export function ConfirmedTeamsView({ onSelectTeam }: ConfirmedTeamsViewProps) {
           </div>
           <div>
             <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Status Atual</span>
-            <strong className="text-lg font-black font-display text-sky-300">Grupos A-F Definidos</strong>
+            <strong className="text-lg font-black font-display text-sky-300">Grupos A-H Definidos ✅</strong>
           </div>
         </div>
       </div>

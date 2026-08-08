@@ -19,7 +19,7 @@ export const GroupStandingsView: React.FC<GroupStandingsProps> = ({
 }) => {
   const [selectedGroup, setSelectedGroup] = useState<GroupName | 'ALL'>('ALL');
 
-  const groups: GroupName[] = ['A', 'B', 'C', 'D'];
+  const groups: GroupName[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
   return (
     <div className="space-y-5">

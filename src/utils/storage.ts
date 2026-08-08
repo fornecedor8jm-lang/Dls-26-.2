@@ -2,7 +2,7 @@ import { Match, PlayerStat } from '../types';
 import { INITIAL_MATCHES } from '../data/initialMatches';
 import { TEAMS } from '../data/teams';
 
-const STORAGE_KEY = 'copa_dls_matches_v2_clean';
+const STORAGE_KEY = 'copa_dls_matches_v3_draw_complete';
 
 export function loadMatchesFromStorage(): Match[] {
   try {
