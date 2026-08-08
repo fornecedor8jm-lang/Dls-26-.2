@@ -14,7 +14,8 @@ import {
   X,
   Zap,
   Flame,
-  ShieldAlert
+  ShieldAlert,
+  Clock
 } from 'lucide-react';
 import { Match, Team } from './types';
 import { TEAMS, getTeamById } from './data/teams';
@@ -22,6 +23,7 @@ import { INITIAL_MATCHES } from './data/initialMatches';
 import { computePlayerStats, getTournamentSummary } from './utils/storage';
 import { calculateGroupStandings } from './utils/standings';
 import { FriendliesView } from './components/FriendliesView';
+import { TrailerSection } from './components/TrailerSection';
 
 type Tab = 'home' | 'friendlies' | 'matches' | 'table' | 'bracket' | 'stats';
 
@@ -253,22 +255,52 @@ function TomorrowSchedule({ matches }: { matches: Match[] }) {
     (match) => match.date === '2026-08-08' && match.stage === 'GROUP'
   );
   return (
-    <section className="container schedule-section">
-      <Title
-        eyebrow="Cronograma de amanhã · 8 de agosto"
-        title="Quem joga amanhã"
-      />
-      <a
-        className="schedule-download"
-        href="/cronograma-08-agosto.txt"
-        download
-      >
-        Baixar cronograma em TXT
-      </a>
-      <p className="page-lead">
-        Oito partidas da fase de grupos. Horários simultâneos: Brasília (BRT) e
-        Moçambique (CAT).
-      </p>
+    <section className="container schedule-section space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <Title
+            eyebrow="Cronograma oficial · 8 de agosto"
+            title="Abertura da Copa DLS 26"
+          />
+          <p className="page-lead">
+            Oito partidas válidas pela 1ª Rodada da Fase de Grupos.
+          </p>
+        </div>
+        <a
+          className="schedule-download primary-button bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs py-2.5 px-4 rounded-lg transition-colors"
+          href="/cronograma-08-agosto.txt"
+          download
+        >
+          📥 Baixar cronograma em TXT
+        </a>
+      </div>
+
+      {/* Regra de Organização - Tabela de Cálculo */}
+      <div className="bg-[#162A3D] border border-[#2B4052] rounded-xl p-4 sm:p-5 text-white shadow-md space-y-3">
+        <div className="flex items-center gap-2 text-amber-400 font-extrabold text-xs uppercase tracking-widest">
+          <Clock size={16} />
+          <span>Regra de Organização · Tabela de Horários Corrigida</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm pt-1">
+          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
+            <span className="text-slate-400 text-[11px] block font-bold">Início da Competição</span>
+            <strong className="text-amber-400 text-base font-black">15:30 BRT | 20:30 MOZ</strong>
+          </div>
+          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
+            <span className="text-slate-400 text-[11px] block font-bold">Intervalo Entre Jogos</span>
+            <strong className="text-emerald-400 text-base font-black">40 minutos</strong>
+            <p className="text-[10px] text-slate-400">45m jogo + 10m intervalo + 5m transição</p>
+          </div>
+          <div className="bg-[#0E1A26] p-3 rounded-lg border border-[#2B4052]/80">
+            <span className="text-slate-400 text-[11px] block font-bold">Fórmula de Fuso Horário</span>
+            <strong className="text-sky-300 text-xs sm:text-sm font-bold block">
+              Jogo N = 20:30 MOZ + (N-1) × 40 min
+            </strong>
+            <p className="text-[10px] text-slate-400">BRT = MOZ - 5 horas</p>
+          </div>
+        </div>
+      </div>
+
       <div className="schedule-list">
         {tomorrow.map((match) => {
           const home = getTeamById(match.homeTeamId);
@@ -560,6 +592,11 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            </section>
+
+            {/* Official Tournament Trailer */}
+            <section className="container section-block">
+              <TrailerSection />
             </section>
 
             {/* Friendly Announcement Banner on Home */}

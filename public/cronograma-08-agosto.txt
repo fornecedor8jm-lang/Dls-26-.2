@@ -2,34 +2,37 @@ COPA DLS 26 — CRONOGRAMA DE JOGOS
 Data: 8 de agosto de 2026
 Fase: Rodada 1 da fase de grupos
 
-Horários simultâneos:
-- Brasília: BRT
-- Moçambique: CAT/MOZ
+Horários simultâneos (Regra de Intervalo: 40 minutos entre jogos):
+- Brasília: BRT (UTC-3)
+- Moçambique: CAT / MOZ (UTC+2 = BRT + 5h)
 
-15:30 BRT | 20:30 MOZ — Grupo A
+15:30 BRT | 20:30 MOZ — Jogo 1 (Grupo A)
 FC BAYERN MUNCHEN x Blue Lock
 
-15:40 BRT | 21:10 MOZ — Grupo A
+16:10 BRT | 21:10 MOZ — Jogo 2 (Grupo A)
 FC Celeste x Dominator
 
-16:20 BRT | 21:50 MOZ — Grupo B
+16:50 BRT | 21:50 MOZ — Jogo 3 (Grupo B)
 Curaçao x Super Giants
 
-17:00 BRT | 22:30 MOZ — Grupo B
+17:30 BRT | 22:30 MOZ — Jogo 4 (Grupo B)
 FC Labamba x FC Levante
 
-17:40 BRT | 23:10 MOZ — Grupo C
+18:10 BRT | 23:10 MOZ — Jogo 5 (Grupo C)
 Luck x Yuri Man
 
-18:20 BRT | 23:50 MOZ — Grupo C
+18:50 BRT | 23:50 MOZ — Jogo 6 (Grupo C)
 Bayer de Munchen x Zanix
 
-19:00 BRT | 00:30 MOZ (9 de agosto) — Grupo D
+19:30 BRT | 00:30 MOZ (9 de agosto) — Jogo 7 (Grupo D)
 Real Madrid CF x Adra FC
 
-19:40 BRT | 01:10 MOZ (9 de agosto) — Grupo D
+20:10 BRT | 01:10 MOZ (9 de agosto) — Jogo 8 (Grupo D)
 Baby Maxx x Soda FC
 
-Observação: os jogos estão agendados. A classificação do mata-mata será definida pelos pontos e resultados oficiais da fase de grupos.
+Fórmula de Cálculo do Horário:
+• Horário do Jogo N (MOZ) = 20:30 + (N-1) × 40 minutos
+• Horário do Jogo N (BRT) = MOZ - 5 horas
+• Composição dos 40 minutos: 45 min de jogo + 10 min de intervalo + 5 min de transição
 
-Atualizações do campeonato: somente via GitHub.
+Observação: os jogos estão agendados. A classificação do mata-mata será definida pelos pontos e resultados oficiais da fase de grupos.

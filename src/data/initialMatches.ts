@@ -24,7 +24,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'dominator',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '15:40',
+    timeBRT: '16:10',
     timeCAT: '21:10'
   },
   // Rodada 2 - 09/08/2026
@@ -37,7 +37,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'celeste',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '15:00',
+    timeBRT: '15:30',
     timeCAT: '20:30'
   },
   {
@@ -49,7 +49,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'dominator',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '15:40',
+    timeBRT: '16:10',
     timeCAT: '21:10'
   },
   // Rodada 3 - 10/08/2026
@@ -62,7 +62,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'bayern',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '15:00',
+    timeBRT: '15:30',
     timeCAT: '20:30'
   },
   {
@@ -74,7 +74,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'celeste',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '15:40',
+    timeBRT: '16:10',
     timeCAT: '21:10'
   },
 
@@ -89,7 +89,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'supergiants',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '16:20',
+    timeBRT: '16:50',
     timeCAT: '21:50'
   },
   {
@@ -101,7 +101,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'levante',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '17:00',
+    timeBRT: '17:30',
     timeCAT: '22:30'
   },
   // Rodada 2 - 09/08/2026
@@ -114,7 +114,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'labamba',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '16:20',
+    timeBRT: '16:50',
     timeCAT: '21:50'
   },
   {
@@ -126,7 +126,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'levante',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '17:00',
+    timeBRT: '17:30',
     timeCAT: '22:30'
   },
   // Rodada 3 - 10/08/2026
@@ -139,7 +139,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'curacao',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '16:20',
+    timeBRT: '16:50',
     timeCAT: '21:50'
   },
   {
@@ -151,7 +151,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'labamba',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '17:00',
+    timeBRT: '17:30',
     timeCAT: '22:30'
   },
 
@@ -166,7 +166,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'yuriman',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '17:40',
+    timeBRT: '18:10',
     timeCAT: '23:10'
   },
   {
@@ -178,7 +178,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'zanix',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '18:20',
+    timeBRT: '18:50',
     timeCAT: '23:50'
   },
   // Rodada 2 - 09/08/2026
@@ -191,7 +191,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'bayer_munchen',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '17:40',
+    timeBRT: '18:10',
     timeCAT: '23:10'
   },
   {
@@ -203,7 +203,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'zanix',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '18:20',
+    timeBRT: '18:50',
     timeCAT: '23:50'
   },
   // Rodada 3 - 10/08/2026
@@ -216,7 +216,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'luck',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '17:40',
+    timeBRT: '18:10',
     timeCAT: '23:10'
   },
   {
@@ -228,7 +228,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'bayer_munchen',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '18:20',
+    timeBRT: '18:50',
     timeCAT: '23:50'
   },
 
@@ -243,7 +243,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'adra',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '19:00',
+    timeBRT: '19:30',
     timeCAT: '00:30'
   },
   {
@@ -255,7 +255,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'soda',
     status: 'SCHEDULED',
     date: '2026-08-08',
-    timeBRT: '19:40',
+    timeBRT: '20:10',
     timeCAT: '01:10'
   },
   // Rodada 2 - 09/08/2026
@@ -268,7 +268,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'babymaxx',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '19:00',
+    timeBRT: '19:30',
     timeCAT: '00:30'
   },
   {
@@ -280,7 +280,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'soda',
     status: 'SCHEDULED',
     date: '2026-08-09',
-    timeBRT: '19:40',
+    timeBRT: '20:10',
     timeCAT: '01:10'
   },
   // Rodada 3 - 10/08/2026
@@ -293,7 +293,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'realmadrid',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '19:00',
+    timeBRT: '19:30',
     timeCAT: '00:30'
   },
   {
@@ -305,7 +305,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'babymaxx',
     status: 'SCHEDULED',
     date: '2026-08-10',
-    timeBRT: '19:40',
+    timeBRT: '20:10',
     timeCAT: '01:10'
   },
 
@@ -317,7 +317,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'labamba',
     status: 'SCHEDULED',
     date: '2026-08-11',
-    timeBRT: '15:00',
+    timeBRT: '15:30',
     timeCAT: '20:30'
   },
   {
@@ -327,8 +327,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'bluelock',
     status: 'SCHEDULED',
     date: '2026-08-11',
-    timeBRT: '16:15',
-    timeCAT: '21:45'
+    timeBRT: '16:10',
+    timeCAT: '21:10'
   },
   {
     id: 'm_qf3',
@@ -337,8 +337,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'soda',
     status: 'SCHEDULED',
     date: '2026-08-11',
-    timeBRT: '17:30',
-    timeCAT: '23:00'
+    timeBRT: '16:50',
+    timeCAT: '21:50'
   },
   {
     id: 'm_qf4',
@@ -347,8 +347,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'bayer_munchen',
     status: 'SCHEDULED',
     date: '2026-08-11',
-    timeBRT: '18:45',
-    timeCAT: '00:15'
+    timeBRT: '17:30',
+    timeCAT: '22:30'
   },
 
   // ================= SEMIFINAIS =================
@@ -359,8 +359,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'yuriman',
     status: 'SCHEDULED',
     date: '2026-08-12',
-    timeBRT: '16:00',
-    timeCAT: '21:30'
+    timeBRT: '15:30',
+    timeCAT: '20:30'
   },
   {
     id: 'm_sf2',
@@ -369,8 +369,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'realmadrid',
     status: 'SCHEDULED',
     date: '2026-08-12',
-    timeBRT: '17:30',
-    timeCAT: '23:00'
+    timeBRT: '16:10',
+    timeCAT: '21:10'
   },
 
   // ================= 3º LUGAR E GRANDE FINAL =================
@@ -381,8 +381,8 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'supergiants',
     status: 'SCHEDULED',
     date: '2026-08-13',
-    timeBRT: '16:00',
-    timeCAT: '21:30'
+    timeBRT: '15:30',
+    timeCAT: '20:30'
   },
   {
     id: 'm_final',
@@ -391,7 +391,7 @@ export const INITIAL_MATCHES: Match[] = [
     awayTeamId: 'realmadrid',
     status: 'SCHEDULED',
     date: '2026-08-13',
-    timeBRT: '18:00',
-    timeCAT: '23:30'
+    timeBRT: '16:10',
+    timeCAT: '21:10'
   }
 ];
